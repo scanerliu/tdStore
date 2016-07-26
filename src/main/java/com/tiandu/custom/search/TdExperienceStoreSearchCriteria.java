@@ -18,9 +18,6 @@ public class TdExperienceStoreSearchCriteria extends SearchCriteria {
 	private String searchName;
 	
 	private Integer regionId;
-	
-	private Integer provinceId;	//省id
-	private Integer cityId;	//市id
 
 	public Integer getId() {
 		return id;
@@ -68,22 +65,6 @@ public class TdExperienceStoreSearchCriteria extends SearchCriteria {
 
 	public void setRegionId(Integer regionId) {
 		this.regionId = regionId;
-	}
-
-	public Integer getProvinceId() {
-		return provinceId;
-	}
-
-	public void setProvinceId(Integer provinceId) {
-		this.provinceId = provinceId;
-	}
-
-	public Integer getCityId() {
-		return cityId;
-	}
-
-	public void setCityId(Integer cityId) {
-		this.cityId = cityId;
 	}
 
 	

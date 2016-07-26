@@ -81,7 +81,7 @@ public class TdUser {
 	/**
 	 * 购物车，显示用
 	 */
-	private ShoppingcartVO shoppingcart;
+	private TdUserAccount userAccount;
 
     public Integer getUid() {
         return uid;
@@ -307,12 +307,13 @@ public class TdUser {
 		this.region = region;
 	}
 
-	public ShoppingcartVO getShoppingcart() {
-		return shoppingcart;
+	
+	public TdUserAccount getUserAccount() {
+		return userAccount;
 	}
 
-	public void setShoppingcart(ShoppingcartVO shoppingcart) {
-		this.shoppingcart = shoppingcart;
+	public void setUserAccount(TdUserAccount userAccount) {
+		this.userAccount = userAccount;
 	}
 
 	public Boolean isLocked(){

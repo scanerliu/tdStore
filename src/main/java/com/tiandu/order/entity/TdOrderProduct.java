@@ -16,6 +16,8 @@ public class TdOrderProduct {
     private Integer itemId;
 
     private BigDecimal itemPrice;
+    
+    private BigDecimal supplierPrice;
 
     private Integer quantity;
 
@@ -122,6 +124,14 @@ public class TdOrderProduct {
 
 	public void setLevel(Integer level) {
 		this.level = level;
+	}
+
+	public BigDecimal getSupplierPrice() {
+		return supplierPrice;
+	}
+
+	public void setSupplierPrice(BigDecimal supplierPrice) {
+		this.supplierPrice = supplierPrice;
 	}
 
 	/**

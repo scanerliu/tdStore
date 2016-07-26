@@ -17,7 +17,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tiandu.common.controller.BaseController;
+import com.tiandu.common.utils.ConstantsUtils;
+import com.tiandu.custom.entity.TdRole;
 import com.tiandu.custom.entity.TdUser;
+import com.tiandu.custom.entity.TdUserAccount;
+import com.tiandu.custom.entity.TdUserAccountLog;
+import com.tiandu.custom.entity.TdUserIntegral;
+import com.tiandu.custom.entity.TdUserIntegralLog;
+import com.tiandu.custom.search.TdRoleSearchCriteria;
+import com.tiandu.custom.search.TdUserAccountLogSearchCriteria;
+import com.tiandu.custom.search.TdUserIntegralLogSearchCriteria;
+import com.tiandu.custom.search.TdUserSearchCriteria;
+import com.tiandu.custom.service.TdRoleService;
+import com.tiandu.custom.service.TdUserAccountLogService;
+import com.tiandu.custom.service.TdUserAccountService;
+import com.tiandu.custom.service.TdUserIntegralLogService;
+import com.tiandu.custom.service.TdUserIntegralService;
 import com.tiandu.express.entity.TdExpress;
 import com.tiandu.express.search.TdExpressSearchCriteria;
 import com.tiandu.express.service.TdExpressService;
@@ -31,7 +46,6 @@ import com.tiandu.order.service.TdOrderLogService;
 import com.tiandu.order.service.TdOrderService;
 import com.tiandu.order.service.TdOrderShipmentService;
 import com.tiandu.order.vo.OperResult;
-import com.tiandu.order.vo.OrderPay;
 import com.tiandu.order.vo.OrderRefund;
 
 /**
@@ -251,74 +265,6 @@ public class OrderController extends BaseController {
 				return res;
 			}catch (Exception e) {
 				logger.error("订单删除失败错误信息:"+e);
-				res.put("code", "0");
-				res.put("msg", "系统错误："+e.getMessage());
-				return res;
-			}
-		}else{
-			res.put("code", "0");
-			res.put("msg", "数据有误！");
-			return res;
-		}
-	}
-	/**
-	 * 订单收款面板
-	 * @param id 订单id
-	 * @param request
-	 * @param response
-	 * @param modelMap
-	 * @return
-	 */
-	@RequestMapping("/pay")
-	public String pay(Integer id, HttpServletRequest request, HttpServletResponse response, ModelMap modelMap) {
-		TdOrder order = null;
-		if(null!=id){
-			order = tdOrderService.findOne(id);		    
-		}
-		if(null==order){
-			modelMap.addAttribute("errmsg", "未找到相关订单，请重新操作！");
-			return "/admin/error";
-		}
-		modelMap.addAttribute("order", order);
-		return "/admin/order/orderpay";
-	}
-	/**
-	 * 订单退款操作
-	 * @param id 订单id
-	 * @param request
-	 * @param response
-	 * @param modelMap
-	 * @return
-	 */
-	@RequestMapping(value="/payorder", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String,String> payorder(OrderPay pay, HttpServletRequest request, HttpServletResponse response) {
-		Map<String,String> res = new HashMap<String,String>(); 
-		if(null!=pay && null!=pay.getOrderId()){
-			try {
-				Date now = new Date();
-				TdUser currUser = this.getCurrentUser();
-				pay.setCreateTime(now);
-				pay.setCreateBy(currUser.getUid());
-				//收款操作
-				TdOrder order = tdOrderService.findOne(pay.getOrderId());
-				if(null!=order){
-					pay.setPayAmount(order.getUnPayAmount());
-					pay.setPaymentId(Byte.valueOf("5"));
-					OperResult result = tdOrderService.payOrder(order,pay);
-					if(result.isFlag()){
-						res.put("code", "1");
-					}else{
-						res.put("code", "0");
-						res.put("msg", result.getFailMsg());
-					}
-				}else{
-					res.put("code", "0");
-					res.put("msg", "订单收款失败：订单未找到！");
-				}
-				return res;
-			}catch (Exception e) {
-				logger.error("订单收款失败错误信息:"+e);
 				res.put("code", "0");
 				res.put("msg", "系统错误："+e.getMessage());
 				return res;

@@ -73,7 +73,7 @@
         <img src="${app.basePath}/static/default/mobile/x-img/pic_pc_index_nan_1.png" alt="">
         <span>我的订单</span>
       </a>
-      <a href="我的钱包.html" title="">
+      <a href="${app.basePath}/mobile/user/account" title="">
         <img src="${app.basePath}/static/default/mobile/x-img/pic_pc_index_nan_2.png" alt="">
         <span>我的钱包</span>
       </a>

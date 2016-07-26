@@ -39,8 +39,8 @@
         <td align="center">${experienceStore.regionFullName!''}</td>
         <td align="center">${experienceStore.address!''}</td>
         <td align="center">${experienceStore.telphone!''}</td>
-        <td align="center"><#if experienceStore.lng??>${experienceStore.lng?c!''}</#if></td>
-        <td align="center"><#if experienceStore.lat??>${experienceStore.lat?c!''}</#if></td>
+        <td align="center">${experienceStore.lng?c!''}</td>
+        <td align="center">${experienceStore.lat?c!''}</td>
         <td align="center">${experienceStore.storeTypeNames!''}</td>
         <td align="center">${experienceStore.statusStr!''}</td>
         <td align="center">${experienceStore.createTime?string('yyyy-MM-dd HH:mm:ss')!''}</td>

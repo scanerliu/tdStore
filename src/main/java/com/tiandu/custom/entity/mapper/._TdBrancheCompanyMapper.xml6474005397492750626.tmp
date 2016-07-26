@@ -148,6 +148,9 @@
     <if test="level != null" >
         and b.level=#{level,jdbcType=TINYINT}
     </if>
+    <if test="regionId != null" >
+        and b.region_id=#{regionId,jdbcType=INTEGER}
+    </if>
     <if test="status != null" >
         and b.status=#{status,jdbcType=TINYINT}
     </if>
@@ -196,5 +199,11 @@
     <if test="districtName != null">
         and d.name like CONCAT('%','${districtName}','%' )
     </if>
+  </select>
+  <select id="findByUid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_branche_company as b
+    where b.uid=#{uid,jdbcType=INTEGER}
   </select>
 </mapper>

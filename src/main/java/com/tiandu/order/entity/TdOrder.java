@@ -57,6 +57,7 @@ public class TdOrder extends TdBaseEntity{
     private Integer gainPoints;
     
     private Boolean  commented;
+    private Boolean  benefited;
     /**
      * 购买人信息
      */
@@ -271,6 +272,14 @@ public class TdOrder extends TdBaseEntity{
 
 	public void setCommented(Boolean commented) {
 		this.commented = commented;
+	}
+
+	public Boolean getBenefited() {
+		return benefited;
+	}
+
+	public void setBenefited(Boolean benefited) {
+		this.benefited = benefited;
 	}
 
 	public TdUser getOrderUser() {

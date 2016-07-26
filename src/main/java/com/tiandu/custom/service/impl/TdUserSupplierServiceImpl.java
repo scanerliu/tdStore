@@ -41,16 +41,16 @@ public class TdUserSupplierServiceImpl implements TdUserSupplierService {
 
 	@Override
 	public List<TdUserSupplier> findBySearchCriteria(TdUserSupplierSearchCriteria sc) {
+		Integer count = userSupplierMapper.countByCriteria(sc);
 		if(sc.getStatus() != null && sc.getStatus() == -1){
 			sc.setStatus(null);
 		}
+		sc.setTotalCount(count);
 		sc.setAssociationUser(true);
 		sc.setAssociationUpdatePerson(true);
 		if(sc.getSearchName() != null && sc.getSearchName().equals("")){
 			sc.setSearchName(null);
 		}
-		Integer count = userSupplierMapper.countByCriteria(sc);
-		sc.setTotalCount(count);
 		List<TdUserSupplier> userSupplierList = userSupplierMapper.findBySearchCriteria(sc);
 //		for(TdUserSupplier ts: userSupplierList){
 //			if(ts.getUid() != null){

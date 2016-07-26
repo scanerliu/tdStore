@@ -67,7 +67,7 @@ public class ExperienceStoreController extends BaseController {
 				tdExperienceStore.setUpdatePerson(tdUserService.findOne(tdExperienceStore.getUpdateBy()));
 			}
 			if(tdExperienceStore.getStoreImages() != null){
-				String[] imgArray = tdExperienceStore.getStoreImages().split(",");
+				String[] imgArray = tdExperienceStore.getStoreImages().split(":");
 				List<String> imgList = new ArrayList<>();
 				for(String img : imgArray){
 					imgList.add(img);

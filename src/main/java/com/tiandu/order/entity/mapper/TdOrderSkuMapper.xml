@@ -12,12 +12,13 @@
     <result column="display_specifications" property="displaySpecifications" jdbcType="VARCHAR" />
     <result column="quantity" property="quantity" jdbcType="INTEGER" />
     <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="supplier_price" property="supplierPrice" jdbcType="DECIMAL" />
     <result column="back_quantity" property="backQuantity" jdbcType="INTEGER" />
     <result column="product_image" property="productImage" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     order_sku_id, order_id, product_id, product_sku_id, item_type, product_name, product_sku_code, 
-    display_specifications, quantity, price, back_quantity,product_image
+    display_specifications, quantity, price,supplier_price, back_quantity,product_image
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -41,11 +42,11 @@
     </selectKey>
     insert into td_order_sku (order_id, product_id, product_sku_id, 
       item_type, product_name, product_sku_code, 
-      display_specifications, quantity, price, 
+      display_specifications, quantity, price, supplier_price,
       back_quantity,product_image)
     values (#{orderId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, #{productSkuId,jdbcType=INTEGER}, 
       #{itemType,jdbcType=TINYINT}, #{productName,jdbcType=VARCHAR}, #{productSkuCode,jdbcType=VARCHAR}, 
-      #{displaySpecifications,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, 
+      #{displaySpecifications,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, #{supplierPrice,jdbcType=DECIMAL}, 
       #{backQuantity,jdbcType=INTEGER}, #{productImage,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.tiandu.order.entity.TdOrderSku" >
@@ -81,6 +82,9 @@
       <if test="price != null" >
         price,
       </if>
+      <if test="supplierPrice != null" >
+        supplier_price,
+      </if>
       <if test="backQuantity != null" >
         back_quantity,
       </if>
@@ -115,6 +119,9 @@
       </if>
       <if test="price != null" >
         #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="supplierPrice != null" >
+        #{supplierPrice,jdbcType=DECIMAL},
       </if>
       <if test="backQuantity != null" >
         #{backQuantity,jdbcType=INTEGER},
@@ -154,6 +161,9 @@
       <if test="price != null" >
         price = #{price,jdbcType=DECIMAL},
       </if>
+      <if test="supplierPrice != null" >
+        supplier_price = #{supplierPrice,jdbcType=DECIMAL},
+      </if>
       <if test="backQuantity != null" >
         back_quantity = #{backQuantity,jdbcType=INTEGER},
       </if>
@@ -174,6 +184,7 @@
       display_specifications = #{displaySpecifications,jdbcType=VARCHAR},
       quantity = #{quantity,jdbcType=INTEGER},
       price = #{price,jdbcType=DECIMAL},
+      supplier_price = #{supplierPrice,jdbcType=DECIMAL},
       back_quantity = #{backQuantity,jdbcType=INTEGER},
       product_image = #{productImage,jdbcType=VARCHAR}
     where order_sku_id = #{orderSkuId,jdbcType=INTEGER}
