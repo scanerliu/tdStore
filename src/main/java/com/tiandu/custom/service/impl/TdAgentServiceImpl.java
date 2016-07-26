@@ -62,6 +62,11 @@ public class TdAgentServiceImpl implements TdAgentService {
 	
 	
 	@Override
+	public int countByCriteria(TdAgentSearchCriteria sc) {
+		return agentMapper.countByCriteria(sc);
+	}
+
+	@Override
 	public Integer save(TdAgent TdAgent) {
 		if(null!=TdAgent){
 			if(null!=TdAgent.getId()){//更新
@@ -78,4 +83,10 @@ public class TdAgentServiceImpl implements TdAgentService {
 		return agentMapper.deleteByPrimaryKey(id);
 	}
 
+	@Override
+	public TdAgent findByUid(Integer uid) {
+		return agentMapper.findByUid(uid);
+	}
+
+	
 }

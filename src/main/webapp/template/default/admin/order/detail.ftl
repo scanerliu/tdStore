@@ -3,6 +3,7 @@
 <div class="J_tablelist table_list table_list2">
 <div class="content_menu ib_a blue line_x">
 	<#if order.orderStatus!=2>
+	<#if order.payStatus==2><span>|</span><a href="javascript:;" onclick="payOrder(${order.orderId!''})" ><em>支付</em></a></#if>
 	<#if order.shipmentStatus==2><span>|</span><a href="javascript:;" onclick="shipOrder(${order.orderId!''})" ><em>发货</em></a></#if>
 	<#if order.orderType!=2 && (order.payStatus==1||order.payStatus==3)><span>|</span><a href="javascript:;" onclick="refundOrder(${order.orderId!''})" ><em>退款</em></a></#if>
 	</#if>

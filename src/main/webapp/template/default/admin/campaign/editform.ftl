@@ -8,7 +8,7 @@
 <table class="table_form" width="100%">
 	<tr>
     	<th width="150">头像：</th>
-    	<td colspan ="3"><img src="${app.basePath}${campaign.uavatar!''}" width="100px" height="100px"></td>
+    	<td colspan ="3"><img src="${campaign.uavatar!''}" width="100px" height="100px"></td>
     </tr>
 	<tr>
         <th width="150">用户：</th>

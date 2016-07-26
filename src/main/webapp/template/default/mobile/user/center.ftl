@@ -64,6 +64,10 @@
   	<#if !currentUser.utel??>
 	    <article class="tips">提示：PC上登陆请绑定手机号码</article>
   	</#if>
+  	<a class="a_go" href="${app.basePath}/mobile/supply/order" title="去发货">
+        <label>去发货</label>
+        <i class="icon-next"></i>
+    </a>
     <article class="pc-nav">
       <a href="${app.basePath}/mobile/order/list" title="">
         <img src="${app.basePath}/static/default/mobile/x-img/pic_pc_index_nan_1.png" alt="">
@@ -78,9 +82,13 @@
         <span>我的积分</span>
       </a>
       <a href="我的流水.html" title="">
-        <img src="${app.basePath}/static/default/mobile/x-img/pic_pc_index_nan_4.png" alt="">
+        <img src="${app.basePath}/static/default/mobile/x-img/pic_pc_index_nan_5.png" alt="">
         <span>我的流水</span>
       </a>
+      <a href="${app.basePath}/mobile/order/refundlist" title="">
+            <img src="${app.basePath}/static/default/mobile/x-img/pic_pc_index_nan_4.png" alt="">
+            <span>我的退款</span>
+        </a>
     </article><!-- pc-nav end -->
     <article class="pc-menu">
       <a href="${app.basePath}/mobile/user/info" title="个人信息">
@@ -103,7 +111,7 @@
         <label>联盟创客</label>
         <i class="icon-next"></i>
       </a>
-      <a href="我的推广.html" title="">
+      <a href="${app.basePath}/mobile/user/mySpread" title="我的推广">
         <i class="icon bg_icon_5"></i>
         <label>我的推广</label>
         <i class="icon-next"></i>
@@ -133,7 +141,7 @@
         <label>商品管理</label>
         <i class="icon-next"></i>
       </a>
-      <a href="../成为代理-分类列表.html" title="">
+      <a href="javascript:goCampaign();" title="参加竞选">
         <i class="icon bg_icon_10"></i>
         <label>参加竞选</label>
         <i class="icon-next"></i>
@@ -143,12 +151,12 @@
         <label>下载app</label>
         <i class="icon-next"></i>
       </a>
-      <a href="../成为代理-分类列表.html" title="">
+      <a href="${app.basePath}/mobile/user/supplierApply" title="供应商资质认证">
         <i class="icon bg_icon_12"></i>
         <label>供应商资质认证</label>
         <i class="icon-next"></i>
       </a>
-      <a href="../附近门店列表页.html" title="">
+      <a href="${app.basePath}/mobile/experience/list" title="附近门店">
         <i class="icon bg_icon_13"></i>
         <label>附近门店</label>
         <i class="icon-next"></i>
@@ -195,7 +203,20 @@
       $('.common-footer a').click(function(){
         $(this).addClass('active').siblings().removeClass('active');
       })
-    })
+    });
+  </script>
+  <script>
+  	function goCampaign(){
+    	var url = basePath+"/mobile/user/hasJoinedCampaing";
+		$.post(url, function(data){
+			var jsonData = eval('('+data+')');
+			if(jsonData.code == "0"){
+				window.location.href=basePath+"/mobile/user/joinElection";
+			}else if(jsonData.code == "1"){
+				alert(jsonData.msg);
+			}
+		}, "text");
+    }
   </script>
   <!-- footer end -->
 </body>

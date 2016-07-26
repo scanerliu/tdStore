@@ -23,6 +23,7 @@
 			<input type="button" onclick="bacthOperProducts(10)" value="取消分类推荐" class="btn" title="批量取消分类推荐"/>
 		</div>
 	</div>
+	<input type="hidden" id="isFromProductPackage" value="<#if isFromProductPackage??>yes<#else>no</#if>">
 	<form id="searchform">
 	<input type="hidden" value="${sc.kind!''}" name="kind">
 	<table width="100%" cellspacing="0" class="search_form">

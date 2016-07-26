@@ -70,11 +70,12 @@
     </selectKey>
     insert into td_product_comment (uid, anonymous, product_id, 
       specifications, score, content, 
-      status, create_time, images
+      status, create_time, images,order_id
       )
     values (#{uid,jdbcType=INTEGER}, #{anonymous,jdbcType=BIT}, #{productId,jdbcType=INTEGER}, 
       #{specifications,jdbcType=VARCHAR}, #{score,jdbcType=TINYINT}, #{content,jdbcType=VARCHAR}, 
-      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{images,jdbcType=LONGVARCHAR}
+      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{images,jdbcType=LONGVARCHAR},
+      #{orderId,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.tiandu.comment.entity.TdProductComment" >
@@ -110,6 +111,9 @@
       <if test="images != null" >
         images,
       </if>
+      <if test="orderId != null" >
+        order_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="uid != null" >
@@ -138,6 +142,9 @@
       </if>
       <if test="images != null" >
         #{images,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -171,6 +178,9 @@
       <if test="images != null" >
         images = #{images,jdbcType=LONGVARCHAR},
       </if>
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -184,7 +194,8 @@
       content = #{content,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      images = #{images,jdbcType=LONGVARCHAR}
+      images = #{images,jdbcType=LONGVARCHAR},
+      order_id = #{orderId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.tiandu.comment.entity.TdProductComment" >
@@ -196,7 +207,8 @@
       score = #{score,jdbcType=TINYINT},
       content = #{content,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      order_id = #{orderId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   

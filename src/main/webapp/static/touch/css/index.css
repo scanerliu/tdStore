@@ -2114,6 +2114,41 @@
 /* 三级联动 */
 .tarea{
 	overflow:hidden;
+}
+.tarea section{
+	position:relative;
+	float:left;
+	overflow:hidden;
+	width:33.33%;
+	height:0.8rem;
+	text-align:center;
+	border-left:1px solid #ddd;
+	box-sizing:border-box;
+	background:#fff;
+}
+.tarea section:nth-child(1){
+	border-left:none;
+}
+.tarea section span{
+	display:inline-block;
+	height:0.8rem;
+	line-height:0.8rem;
+	padding-right:0.28rem;
+	background:url(../images/bottom2.png) no-repeat 100% center;
+	background-size:0.18rem 0.11rem;
+}
+.tarea select{
+	position:absolute;
+	top:0.2rem;
+	left:0;
+	z-inddex:100;
+	width:100%;
+	heightr:0.8rem;
+	opacity:0;
+}
+/**
+.tarea{
+	overflow:hidden;
 	height:0.8rem;
 	line-height:0.8rem;
 	border-bottom:1px solid #ddd;
@@ -2139,6 +2174,7 @@
     background: url(../images/bottom2.png) no-repeat 100% center;
     background-size: 0.18rem 0.11rem;
 }
+*/
 /* 三级联动-结束 */
 
 .nearest li{

@@ -2,14 +2,15 @@ package com.tiandu.custom.search;
 
 import com.tiandu.common.search.SearchCriteria;
 
-public class TdUserCampaignCriteria extends SearchCriteria{
+public class TdUserCampaignCriteria extends SearchCriteria {
 
 	private Integer regionId; // 参与查询的地区ID
-	
-	private Integer provinceId;	//省id
-	private Integer cityId;	//市id
-	private Integer region; //区id
-	
+
+	private Integer provinceId; // 省id
+	private Integer cityId; // 市id
+	private Integer region; // 区id
+	private Integer uid;
+
 	private Integer cid; // 活动Id
 
 	public Integer getRegionId() {
@@ -51,7 +52,13 @@ public class TdUserCampaignCriteria extends SearchCriteria{
 	public void setCid(Integer cid) {
 		this.cid = cid;
 	}
-	
-	
-	
+
+	public Integer getUid() {
+		return uid;
+	}
+
+	public void setUid(Integer uid) {
+		this.uid = uid;
+	}
+
 }

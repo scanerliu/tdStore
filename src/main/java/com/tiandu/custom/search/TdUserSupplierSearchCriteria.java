@@ -6,6 +6,8 @@ public class TdUserSupplierSearchCriteria extends SearchCriteria {
 	private Integer id;
 
 	private Byte status;
+	
+	private Integer userId;
 
 	private boolean isAssociationUser;
 
@@ -52,5 +54,15 @@ public class TdUserSupplierSearchCriteria extends SearchCriteria {
 	public void setSearchName(String searchName) {
 		this.searchName = searchName;
 	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+	
+	
 
 }
