@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="${app.basePath}/static/touch/css/swipe.css" />
     <link rel="stylesheet" href="${app.basePath}/static/touch/css/index.css">
     <!-- js -->
-    <#include "/common/common.ftl" />
     <script type="text/javascript" src="${app.basePath}/static/touch/js/jquery-1.9.1.min.js"></script> 
     <script type="text/javascript" src="${app.basePath}/static/touch/js/swipe.js"></script> 
     <script type="text/javascript" src="${app.basePath}/static/touch/js/common.js"></script>
@@ -32,9 +31,9 @@ $(document).ready(function(){
         var check = document.getElementById("isCheck");
         if(check.checked){
             $("#sub_btn").css("background","#f23030");
-            $("#sub_btn").on("click",buynow);
+            $("#sub_btn").attr("href","${app.basePath}/mobile/agent/dopay?id="+${agent.id?c});
         }else{
-            $("#sub_btn").off("click");
+            $("#sub_btn").attr("href","javascript:;");
             $("#sub_btn").css("background","#999999");
         }
      });
@@ -63,33 +62,11 @@ $(document).ready(function(){
         <section class="sec4">￥<span><#if agent.salesPrice??>${agent.salesPrice?string('0.00')}</#if></span></section>
         </#if>
         <section class="sec5"><input type="checkbox" checked="checked" id="isCheck">我已阅读并同意<a href="${app.basePath}/mobile/agent/article" title="《创客联盟代理条款》">《创客联盟代理条款》</a></section>
- <!--       <section class="sec6"><a href="${app.basePath}/mobile/agent/dopay?id=${agent.id?c}" title="立即加入" id="sub_btn">立即加入</a></section> -->
-        <section class="sec6"><a href="javascript:;" onclick="buyNow();" title="立即加入" id="sub_btn">立即加入</a></section>
-        <form id="agentform" method="post" action="">
-        	<input type="hidden" name="agentProductId" id="agentProductId" value="${agent.id!''}"/>
-        	<input type="hidden" name="productType" value="2"/>
-        	<input type="hidden" name="productTypeId" id="productTypeId" value="${typeId!''}"/>
-        	<input type="hidden" name="regionId" id="regionId" value="${regionId!''}"/>
-        </form>
+        <section class="sec6"><a href="${app.basePath}/mobile/agent/dopay?id=${agent.id?c}" title="立即加入" id="sub_btn">立即加入</a></section>
+        
     </div>
 </section>
 <!-- Center end -->
-<script>
-//立即购买
-function buyNow(){
-	var agentProductId = $("#agentProductId").val();
-	var regionId = $("#regionId").val();
-	var productTypeId = $("#productTypeId").val();
-	
-	if(agentProductId>0){
-		var url = basePath+"/mobile/shoppingcart/singleorder";
-		$("#agentform").attr("action",url);
-		$("#agentform").submit();
-	}else{
-		alert("数据有误，请重新操作！");
-	}
-}
-</script>
 
 </body>
 </html>

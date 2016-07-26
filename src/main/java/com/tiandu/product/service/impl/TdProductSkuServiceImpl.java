@@ -5,11 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tiandu.custom.entity.TdAgent;
-import com.tiandu.custom.search.TdAgentSearchCriteria;
 import com.tiandu.product.entity.TdProductSku;
 import com.tiandu.product.entity.mapper.TdProductSkuMapper;
-import com.tiandu.product.search.TdProductSkuCriteria;
 import com.tiandu.product.service.TdProductSkuService;
 
 @Service("tdProductSkuService")
@@ -54,14 +51,6 @@ public class TdProductSkuServiceImpl implements TdProductSkuService{
 	@Override
 	public Integer deleteByProductId(Integer proId) {
 		return tdProductSkuMapper.deleteByProductId(proId);
-	}
-
-	@Override
-	public List<TdProductSku> findBySearchCriteria(TdProductSkuCriteria sc) {
-		Integer count = tdProductSkuMapper.countByCriteria(sc);
-		sc.setTotalCount(count);
-		List<TdProductSku> skuList = tdProductSkuMapper.findBySearchCriteria(sc);
-		return skuList;
 	}
 	
 }
