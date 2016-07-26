@@ -33,6 +33,7 @@ import com.tiandu.custom.entity.TdAgent;
 import com.tiandu.custom.entity.TdExperienceStore;
 import com.tiandu.custom.entity.TdMembership;
 import com.tiandu.custom.entity.TdUser;
+import com.tiandu.custom.entity.TdUserAccount;
 import com.tiandu.custom.entity.TdUserAddress;
 import com.tiandu.custom.entity.TdUserMessage;
 import com.tiandu.custom.search.TdAgentSearchCriteria;
@@ -41,6 +42,7 @@ import com.tiandu.custom.search.TdUserSearchCriteria;
 import com.tiandu.custom.service.TdAgentService;
 import com.tiandu.custom.service.TdExperienceStoreService;
 import com.tiandu.custom.service.TdMembershipService;
+import com.tiandu.custom.service.TdUserAccountService;
 import com.tiandu.custom.service.TdUserAddressService;
 import com.tiandu.custom.service.TdUserMessageService;
 import com.tiandu.custom.service.TdUserSignService;
@@ -132,6 +134,9 @@ public class MUserController extends BaseController {
 	
 	@Autowired
 	TdProductSkuService tdProductSkuService;
+	
+	@Autowired
+	TdUserAccountService tdUserAccountService;
 	
 	
 	// 个人中心
@@ -433,7 +438,7 @@ public class MUserController extends BaseController {
 	}
 	
 	/**
-	 * 地区选择
+	 * 地址的地区选择
 	 * @param provinceId 省
 	 * @param cityId 市
 	 * @return
@@ -493,7 +498,7 @@ public class MUserController extends BaseController {
 	}
 	
 	/**
-	 * 地址删除
+	 * 用户地址删除
 	 * @param addressId
 	 * @return
 	 */
@@ -524,6 +529,26 @@ public class MUserController extends BaseController {
 		resMap.put("status",ConstantsUtils.RETURN_CODE_SUCCESS);
 		resMap.put("msg","成功");
 		return resMap;
+	}
+	
+	@RequestMapping(value = "/account")
+	public String userAccount(ModelMap map)
+	{
+		TdUser tdUser = this.getCurrentUser();
+		// 系统配置
+		map.addAttribute("system", getSystem());
+		TdUserAccount userAccount = tdUserAccountService.findOne(tdUser.getUid());
+		if(userAccount == null)
+		{
+			userAccount = new TdUserAccount();
+			userAccount.setUid(tdUser.getUid());
+			userAccount.setAmount(new BigDecimal(0));
+			userAccount.setStatus(TdUserAccount.ACCOUNT_STATUS_ACTIVE);
+			userAccount.setUpdateBy(0);
+			tdUserAccountService.insert(userAccount);
+		}
+		map.addAttribute("account",userAccount);
+		return "/mobile/user/account";
 	}
 	
 	

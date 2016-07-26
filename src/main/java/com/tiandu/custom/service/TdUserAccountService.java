@@ -16,4 +16,6 @@ public interface TdUserAccountService {
 	 */
 	public boolean addAmount(TdUserAccount record, TdUserAccountLog log);
 	
+//	public TdUserAccount findByUid(Integer uId);
+	
 }
