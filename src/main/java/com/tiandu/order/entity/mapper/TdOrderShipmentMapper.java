@@ -19,4 +19,6 @@ public interface TdOrderShipmentMapper {
     int updateByPrimaryKey(TdOrderShipment record);
     
     public List<TdOrderShipment> findBySearchCriteria(TdOrderShipmentSearchCriteria sc);
+
+	Integer countByCriteria(TdOrderShipmentSearchCriteria sc);
 }

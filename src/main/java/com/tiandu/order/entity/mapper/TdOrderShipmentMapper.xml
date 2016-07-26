@@ -17,6 +17,8 @@
     <result column="return_cause" property="returnCause" jdbcType="INTEGER" />
     <result column="return_amount" property="returnAmount" jdbcType="DECIMAL" />
     
+    <!-- 订单信息 -->
+    <association property="order" resultMap="orderResult"/>
     <!-- 物流公司信息 -->
     <association property="trackExpress" resultMap="trackExpressResult"/>
     <!-- 进行 多表关联插叙，先关联shipment和shipmentitem -->
@@ -30,6 +32,12 @@
   <resultMap id="ResultMapWithBLOBs" type="com.tiandu.order.entity.TdOrderShipment" extends="BaseResultMap" >
     <result column="tracking_trace" property="trackingTrace" jdbcType="LONGVARCHAR" />
     <result column="voucher_images" property="voucherImages" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  
+  <resultMap id="orderResult" type="com.tiandu.order.entity.TdOrder">
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="pay_amount" property="payAmount" jdbcType="DECIMAL" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
   </resultMap>
   
   <resultMap id="itemOrderSkuResult" type="com.tiandu.order.entity.TdOrderSku" >
@@ -54,14 +62,44 @@
   <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.order.search.TdOrderShipmentSearchCriteria" >
     select 
     <include refid="Base_Column_List" />
+    <if test="getOrder">
+    , r.total_amount, r.pay_amount, r.order_no 
+    </if>
     , e.name as express_name, i.id as ITEM_ID, i.quantity as ITEM_QUANTITY, o.product_name as item_productName, o.display_specifications as item_specification
     from td_order_shipment s left join td_express e on s.tracking_id = e.id left join td_order_shipment_item i on i.shipment_id = s.id left join td_order_sku o on i.order_sku_id = o.order_sku_id
+    <if test="getOrder">
+     left join td_order r on r.order_id=s.order_id 
+    </if>
     where 1=1 
     <if test="type != null" >
         and s.type=#{type,jdbcType=TINYINT}
     </if>
     <if test="orderId != null" >
         and s.order_id=#{orderId,jdbcType=INTEGER}
+    </if>
+    <if test="uid != null" >
+        and r.user_id=#{uid,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.order.search.TdOrderShipmentSearchCriteria" >
+    select 
+    <include refid="Base_Column_List" />
+    <if test="getOrder">
+    , total_amount, pay_amount
+    </if>
+    from td_order_shipment s 
+    <if test="getOrder">
+     left join td_order o on o.order_id=s.order_id 
+    </if>
+    where 1=1 
+    <if test="type != null" >
+        and s.type=#{type,jdbcType=TINYINT}
+    </if>
+    <if test="orderId != null" >
+        and s.order_id=#{orderId,jdbcType=INTEGER}
+    </if>
+    <if test="uid != null" >
+        and o.user_id=#{uid,jdbcType=INTEGER}
     </if>
   </select>
   

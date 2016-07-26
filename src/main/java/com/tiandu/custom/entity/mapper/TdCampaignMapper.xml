@@ -204,7 +204,9 @@
   </select>
   <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.custom.search.TdCampaignSearchCriteria" >
     select 
-    <include refid="Base_Column_List" />
+    <include refid="Base_Column_List" />,
+    <include refid="Blob_Column_List" />
+    
     <if test="isAssociationcCreatePerson">
         , c.uname as createname
     </if>

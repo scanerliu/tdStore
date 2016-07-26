@@ -337,7 +337,7 @@ public class TdProduct {
     	StringBuffer sb = new StringBuffer();
     	if(null!=this.getOnshelf()){
     		if(this.getOnshelf()) {
-    			sb.append("已架中");
+    			sb.append("已上架");
     		}else{
     			sb.append("已下架");
     		}

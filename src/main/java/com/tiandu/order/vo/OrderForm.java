@@ -11,7 +11,7 @@ public class OrderForm {
 
 	private Integer addressId;	//收货地址id
 	
-	private Byte paymentId; //支付方式
+	private Byte paymentId = 1; //支付方式
 	
 	private Boolean usePoints; //使用积分抵充金额
 	
@@ -34,9 +34,17 @@ public class OrderForm {
 	 */
 	private Integer productType = 1;
 	/**
-	 * 商品id，立即下单使用 
+	 * 代理产品id，立即下单使用 
 	 */
 	private Integer agentProductId;
+	/**
+	 * 单代类目id
+	 */
+	private Integer productTypeId;
+	/**
+	 * 单代地区id，0为全国代理
+	 */
+	private Integer regionId = 0;
 	
 	/**
 	 *用户收货地址 
@@ -121,6 +129,22 @@ public class OrderForm {
 
 	public void setUserAddress(TdUserAddress userAddress) {
 		this.userAddress = userAddress;
+	}
+
+	public Integer getProductTypeId() {
+		return productTypeId;
+	}
+
+	public void setProductTypeId(Integer productTypeId) {
+		this.productTypeId = productTypeId;
+	}
+
+	public Integer getRegionId() {
+		return regionId;
+	}
+
+	public void setRegionId(Integer regionId) {
+		this.regionId = regionId;
 	}
 	
 	

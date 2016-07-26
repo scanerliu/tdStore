@@ -34,11 +34,17 @@
     </tr>
     <tr>
         <th>经度：</th>
-        <td>${tdExperienceStore.lng?c!''}</td>
+        <td>
+        	<input type="text" name="lng" class="easyui-textbox" value="<#if tdExperienceStore.lng??>${tdExperienceStore.lng?c!''}</#if>"  style="width:200px;height:30px" data-options="required:true" validType="length[2,64]">
+        	<a href="http://api.map.baidu.com/lbsapi/getpoint/" target="_blank">坐标拾取</a>
+        </td>
     </tr>
     <tr>
         <th>维度：</th>
-        <td>${tdExperienceStore.lat?c!''}</td>
+        <td>
+        	<input type="text" name="lat" class="easyui-textbox" value="<#if tdExperienceStore.lat??>${tdExperienceStore.lat?c!''}</#if>"  style="width:200px;height:30px" data-options="required:true" validType="length[2,64]">
+        	<a href="http://api.map.baidu.com/lbsapi/getpoint/" target="_blank">坐标拾取</a>
+        </td>
     </tr>
     <tr>
         <th>产品类：</th>

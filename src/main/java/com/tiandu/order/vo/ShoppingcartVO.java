@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+import com.tiandu.custom.entity.TdAgent;
+import com.tiandu.custom.entity.TdBrancheCompany;
 import com.tiandu.order.entity.TdShoppingcartItem;
+import com.tiandu.product.entity.TdAgentProduct;
 
 public class ShoppingcartVO {
 	/**
@@ -43,9 +46,28 @@ public class ShoppingcartVO {
 	/**
 	 * 是否可以使用钱包余额支付
 	 */
-	private Boolean canUserAccount;
+	private Boolean canUserAccount = false;
 	
 	private List<TdShoppingcartItem> itemList;
+	
+	/**
+	 * 代理商
+	 */
+	private TdAgent agent;
+	/**
+	 * 分公司
+	 */
+	private TdBrancheCompany branch;
+	
+	/**
+	 * 代理产品
+	 */
+	private TdAgentProduct agentProduct;
+	
+	/**
+	 * 购买类型1-普通商品，2-单代产品，3-供应商，4-图片订单
+	 */
+	private Integer ptype;
 	/**
 	 * 是否组合订单（如果包含多个供应商，是组合订单），用作拆单操作标记
 	 */
@@ -62,7 +84,7 @@ public class ShoppingcartVO {
     /**
      * 获得赠送总积分
      */
-    private Integer gainPoints;
+    private Integer gainPoints = 0;
 	
 	public Integer getTotalcount() {
 		return totalcount;
@@ -174,6 +196,38 @@ public class ShoppingcartVO {
 
 	public void setGainPoints(Integer gainPoints) {
 		this.gainPoints = gainPoints;
+	}
+
+	public TdAgent getAgent() {
+		return agent;
+	}
+
+	public void setAgent(TdAgent agent) {
+		this.agent = agent;
+	}
+
+	public TdBrancheCompany getBranch() {
+		return branch;
+	}
+
+	public void setBranch(TdBrancheCompany branch) {
+		this.branch = branch;
+	}
+
+	public Integer getPtype() {
+		return ptype;
+	}
+
+	public void setPtype(Integer ptype) {
+		this.ptype = ptype;
+	}
+
+	public TdAgentProduct getAgentProduct() {
+		return agentProduct;
+	}
+
+	public void setAgentProduct(TdAgentProduct agentProduct) {
+		this.agentProduct = agentProduct;
 	}
 	
 	

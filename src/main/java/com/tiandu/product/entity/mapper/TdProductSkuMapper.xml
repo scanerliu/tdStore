@@ -216,4 +216,33 @@
 	    where product_id = #{productId,jdbcType=INTEGER}
 	  </delete>
 	  
+	  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.custom.search.TdAgentSearchCriteria" >
+	    select count(s.id)
+	    from td_product_sku as s
+	    left join td_product p on s.product_id= p.id
+	    where 1=1 
+	    <if test="id != null" >
+	        and s.id=#{id,jdbcType=INTEGER}
+	    </if>
+	    <if test="productName != null">
+	        and p.name like CONCAT('%','${productName}','%' )
+	    </if>
+	  </select>
+	  
+	  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.custom.search.TdAgentSearchCriteria" >
+	    select 
+	    <include refid="Base_Column_List" />
+	    ,p.kind as p_kind, p.uid as p_uid, p.name as p_name, p.postage as p_postage, p.status as p_status, p.onshelf as p_onshelf
+	    from td_product_sku as s
+	    left join td_product p on s.product_id= p.id
+	    where 1=1 
+	    <if test="id != null" >
+	        and s.id=#{id,jdbcType=INTEGER}
+	    </if>
+	    <if test="productName != null">
+	        and p.name like CONCAT('%','${productName}','%' )
+	    </if>
+	  </select>
+	  
+	  
 </mapper>

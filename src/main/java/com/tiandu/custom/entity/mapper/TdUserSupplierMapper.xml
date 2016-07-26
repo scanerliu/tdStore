@@ -160,9 +160,30 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.custom.search.TdUserSupplierSearchCriteria" >
-    select count(id)
-    from td_user_supplier
+    select count(s.id)
+    <if test="isAssociationUser">
+        , u.uname as username
+    </if>
+    <if test="isAssociationUpdatePerson" >
+        , c.uname as updatename
+    </if>
+    from td_user_supplier as s
+    <if test="isAssociationUser">
+        left join td_user u on u.uid= s.uid
+    </if>
+    <if test="isAssociationUpdatePerson" >
+        left join td_user c on c.uid= s.update_by
+    </if>
     where 1=1 
+    <if test="status != null" >
+        and s.status=#{status,jdbcType=TINYINT}
+    </if>
+    <if test="userId != null" >
+        and s.uid=#{userId,jdbcType=INTEGER}
+    </if>
+    <if test="searchName != null">
+        and u.uname like CONCAT('%','${searchName}','%' )
+    </if>
   </select>
   <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.custom.search.TdUserSupplierSearchCriteria" >
     select 
@@ -183,6 +204,9 @@
     where 1=1 
     <if test="status != null" >
         and s.status=#{status,jdbcType=TINYINT}
+    </if>
+    <if test="userId != null" >
+        and s.uid=#{userId,jdbcType=INTEGER}
     </if>
     <if test="searchName != null">
         and u.uname like CONCAT('%','${searchName}','%' )

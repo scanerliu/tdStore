@@ -23,7 +23,14 @@ public class TdOrderProduct {
 
     private String attachment;
     
+    private Integer productTypeId;
+    
+    private Integer regionId;
+    
+    private Integer level;
+    
     private String[] attachments;
+    
 
     public Integer getId() {
         return id;
@@ -91,6 +98,30 @@ public class TdOrderProduct {
     
     public void setAttachments(String[] attachments) {
 		this.attachments = attachments;
+	}
+
+	public Integer getProductTypeId() {
+		return productTypeId;
+	}
+
+	public void setProductTypeId(Integer productTypeId) {
+		this.productTypeId = productTypeId;
+	}
+
+	public Integer getRegionId() {
+		return regionId;
+	}
+
+	public void setRegionId(Integer regionId) {
+		this.regionId = regionId;
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 
 	/**
