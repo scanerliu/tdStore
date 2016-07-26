@@ -167,9 +167,6 @@
     where uid = #{uid,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.tiandu.custom.entity.TdUser" >
-    <selectKey resultType="java.lang.Integer" keyProperty="uid" order="AFTER" >
-      SELECT LAST_INSERT_ID()
-    </selectKey>
     insert into td_user (uname, upassword, joint_id, 
       unick, utel, uverification, 
       ustatus, utype, uparent_id, 

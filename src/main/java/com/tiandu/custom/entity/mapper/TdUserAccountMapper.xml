@@ -25,9 +25,9 @@
     <selectKey resultType="java.lang.Integer" keyProperty="uid" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into td_user_account (amount, status, update_time, 
+    insert into td_user_account (uid, amount, status, update_time, 
       update_by)
-    values (#{amount,jdbcType=DECIMAL}, #{status,jdbcType=TINYINT}, #{updateTime,jdbcType=TIMESTAMP}, 
+    values (#{uid,jdbcType=INTEGER},#{amount,jdbcType=DECIMAL}, #{status,jdbcType=TINYINT}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.tiandu.custom.entity.TdUserAccount" >

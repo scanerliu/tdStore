@@ -30,6 +30,8 @@ public class TdOrderSku {
     private Integer quantity;
 
     private BigDecimal price;
+    
+    private BigDecimal supplierPrice;
 
     private Integer backQuantity;
     
@@ -120,7 +122,15 @@ public class TdOrderSku {
         this.price = price;
     }
 
-    public Integer getBackQuantity() {
+    public BigDecimal getSupplierPrice() {
+		return supplierPrice;
+	}
+
+	public void setSupplierPrice(BigDecimal supplierPrice) {
+		this.supplierPrice = supplierPrice;
+	}
+
+	public Integer getBackQuantity() {
         return backQuantity;
     }
 

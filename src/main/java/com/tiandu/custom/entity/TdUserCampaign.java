@@ -11,7 +11,7 @@ public class TdUserCampaign {
 
     private Integer cid;
 
-    private Integer level = 999999;
+    private Integer level;
 
     private Integer regionId;
 
@@ -21,7 +21,7 @@ public class TdUserCampaign {
 
     private String declaration;
 
-    private Integer agentCount = 0;
+    private Integer agentCount;
 
     private Integer enterpriseCount;
 

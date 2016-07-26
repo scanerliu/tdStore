@@ -7,6 +7,7 @@
     <result column="item_type" property="itemType" jdbcType="TINYINT" />
     <result column="item_id" property="itemId" jdbcType="INTEGER" />
     <result column="item_price" property="itemPrice" jdbcType="DECIMAL" />
+    <result column="supplier_price" property="supplierPrice" jdbcType="DECIMAL" />
     <result column="quantity" property="quantity" jdbcType="INTEGER" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="region_id" property="regionId" jdbcType="INTEGER" />
@@ -17,7 +18,7 @@
     <result column="attachment" property="attachment" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, order_id, item_type, item_id, item_price, quantity, title, product_type_Id, region_id, level
+    id, order_id, item_type, item_id, item_price,supplier_price, quantity, title, product_type_Id, region_id, level
   </sql>
   <sql id="Blob_Column_List" >
     attachment
@@ -55,10 +56,10 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into td_order_product (order_id, item_type, item_id, 
-      item_price, quantity, title, region_id, product_type_Id, level,
+      item_price, supplier_price, quantity, title, region_id, product_type_Id, level,
       attachment)
     values (#{orderId,jdbcType=INTEGER}, #{itemType,jdbcType=TINYINT}, #{itemId,jdbcType=INTEGER}, 
-      #{itemPrice,jdbcType=DECIMAL}, #{quantity,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{regionId,jdbcType=INTEGER}, #{productTypeId,jdbcType=INTEGER},  #{level,jdbcType=INTEGER},
+      #{itemPrice,jdbcType=DECIMAL}, #{supplierPrice,jdbcType=DECIMAL}, #{quantity,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{regionId,jdbcType=INTEGER}, #{productTypeId,jdbcType=INTEGER},  #{level,jdbcType=INTEGER},
       #{attachment,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.tiandu.order.entity.TdOrderProduct" >
@@ -78,6 +79,9 @@
       </if>
       <if test="itemPrice != null" >
         item_price,
+      </if>
+      <if test="supplierPrice != null" >
+        supplier_price,
       </if>
       <if test="quantity != null" >
         quantity,
@@ -110,6 +114,9 @@
       </if>
       <if test="itemPrice != null" >
         #{itemPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="supplierPrice != null" >
+        #{supplierPrice,jdbcType=DECIMAL},
       </if>
       <if test="quantity != null" >
         #{quantity,jdbcType=INTEGER},
@@ -146,6 +153,9 @@
       <if test="itemPrice != null" >
         item_price = #{itemPrice,jdbcType=DECIMAL},
       </if>
+      <if test="supplierPrice != null" >
+        supplier_price = #{supplierPrice,jdbcType=DECIMAL},
+      </if>
       <if test="quantity != null" >
         quantity = #{quantity,jdbcType=INTEGER},
       </if>
@@ -173,6 +183,7 @@
       item_type = #{itemType,jdbcType=TINYINT},
       item_id = #{itemId,jdbcType=INTEGER},
       item_price = #{itemPrice,jdbcType=DECIMAL},
+      supplier_price = #{supplierPrice,jdbcType=DECIMAL},
       quantity = #{quantity,jdbcType=INTEGER},
       title = #{title,jdbcType=VARCHAR},
       region_id = #{regionId,jdbcType=INTEGER}, 
@@ -187,6 +198,7 @@
       item_type = #{itemType,jdbcType=TINYINT},
       item_id = #{itemId,jdbcType=INTEGER},
       item_price = #{itemPrice,jdbcType=DECIMAL},
+      supplier_price = #{supplierPrice,jdbcType=DECIMAL},
       quantity = #{quantity,jdbcType=INTEGER},
       title = #{title,jdbcType=VARCHAR},
       region_id = #{regionId,jdbcType=INTEGER}, 

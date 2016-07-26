@@ -32,6 +32,7 @@ public interface TdUserService {
 	 */
 	public Integer saveCustomer(TdUser user);
 	public TdUser findOne(Integer id);
+	public TdUser findOneWithAccount(Integer id);
 	public TdUser selectByUname(String uname);
 	public List<TdUser> findBySearchCriteria(TdUserSearchCriteria sc);
 	public TdUser findOneWithRoles(Integer id);

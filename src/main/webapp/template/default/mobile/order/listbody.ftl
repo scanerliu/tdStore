@@ -14,26 +14,6 @@
 	      </#if>
 	      </span></p>
 	    </div>
-	    <#if order?? && order.productList?? && (order.productList?size > 0)>
-    	<div class="middle">
-    		<#list order.productList as product>
-    		<div class="right-content">
-	        <h3>${product.title!''} ${product.getItemTypeStr()!''}</h3>
-	        <p>
-	          <label class="lab1">￥${product.itemPrice!'0'}</label>
-	          <label class="lab2">x<span>${product.quantity!'0'}</span></label>
-	        </p>
-    		<#if product.attachments??>
-    			<p>
-				<#list product.attachments as atta>
-        			<a href="${app.basePath}${atta}" target="_blank"><img src="${app.basePath}${atta}" alt="图片" width="60"/></a>
-        		</#list>            				
-				</p>
-			</#if>
-			</div>
-    		</#list>
-    	</div>
-    	</#if>
 	    <#if order.skuList??>
 	    <#list order.skuList as sku>
 	    <div class="middle">
@@ -59,10 +39,9 @@
 	      	共 <span>${order.itemNum!'0'}</span> 件商品  合计<strong class="price">￥<span>${order.totalAmount!'0'}</span></strong>（含运费：<strong>￥<span>${order.postage!'0'}</span></strong>）
 	    </div>
 	    <div class="btn-group">
-	      <#if order.payStatus==2><a href="javascript:;" class="active" title="">立即付款</a></#if>
-	      <#if order.payStatus==1&& order.shipmentStatus==1><a class="active" href="javascript:;" onclick="receiptOrder(${order.orderId!'0'})" title="">确认收货</a></#if>
-	      <#if order.orderStatus==3 && order.commented==false><a class="active" href="${app.basePath}/mobile/user/comment/${order.orderId!'0'}" title="去评价">去评价</a></#if>
+	      <#if order.payStatus==2><a href="javascript:;" title="">立即付款</a></#if>
 	      <a href="${app.basePath}/mobile/order/detail${order.orderId!'0'}" title="">查看订单</a>
+	      <#if order.orderStatus==3 && order.commented==false><a class="active" href="我的评价.html" title="">去评价</a></#if>
 	    </div>
 	  </section>
 	</#list>

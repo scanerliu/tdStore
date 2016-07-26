@@ -410,9 +410,6 @@
     <if test="kind != null">
     	and kind = #{kind,jdbcType=TINYINT}
     </if>
-    <if test="isNormalProduct != null and isNormalProduct == true">
-    	and p.kind != 2
-    </if>
     <if test="typeId != null">
     	and type_id = #{typeId,jdbcType=INTEGER}
     </if>
@@ -477,9 +474,6 @@
     </if>
     <if test="typeId != null">
     	and p.type_id = #{typeId,jdbcType=INTEGER}
-    </if>
-    <if test="isNormalProduct != null and isNormalProduct == true">
-    	and p.kind != 2
     </if>
     <if test="productTypeIds != null">
     	and p.type_id in (

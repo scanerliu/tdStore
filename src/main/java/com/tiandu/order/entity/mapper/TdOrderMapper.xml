@@ -26,6 +26,7 @@
     <result column="joint_id" property="jointId" jdbcType="INTEGER" />
     <result column="gain_points" property="gainPoints" jdbcType="INTEGER" />
     <result column="commented" property="commented" jdbcType="BIT" />
+    <result column="benefited" property="benefited" jdbcType="INTEGER" />
     
     <!-- 更新人信息 -->
 	<association property="updateUser" resultMap="updateUserResult"/>
@@ -70,7 +71,7 @@
   <sql id="Base_Column_List" >
     o.order_id, o.order_no, o.order_type, o.supplier_id, o.user_id, o.item_num, o.total_amount, o.used_point, 
     o.point_amount, o.pay_amount, o.postage, o.product_amount,o.refund_amount, o.payment_id, o.user_message, o.order_status, 
-    o.pay_status, o.shipment_status, o.create_time, o.update_time, o.update_by, o.joint_id, o.gain_points, o.commented
+    o.pay_status, o.shipment_status, o.create_time, o.update_time, o.update_by, o.joint_id, o.gain_points, o.commented, o.benefited
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -198,7 +199,7 @@
       postage, product_amount, refund_amount, payment_id, 
       user_message, order_status, pay_status, 
       shipment_status, create_time, update_time, 
-      update_by, joint_id, gain_points, commented
+      update_by, joint_id, gain_points, commented, benefited
       )
     values (#{orderNo,jdbcType=VARCHAR}, #{orderType,jdbcType=TINYINT}, #{supplierId,jdbcType=INTEGER}, 
       #{userId,jdbcType=INTEGER}, #{itemNum,jdbcType=INTEGER}, #{totalAmount,jdbcType=DECIMAL}, 
@@ -206,7 +207,7 @@
       #{postage,jdbcType=DECIMAL}, #{productAmount,jdbcType=DECIMAL}, #{refundAmount,jdbcType=DECIMAL}, #{paymentId,jdbcType=TINYINT}, 
       #{userMessage,jdbcType=VARCHAR}, #{orderStatus,jdbcType=TINYINT}, #{payStatus,jdbcType=TINYINT}, 
       #{shipmentStatus,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=INTEGER}, #{jointId,jdbcType=INTEGER}, #{gainPoints,jdbcType=INTEGER}, #{commented,jdbcType=BIT}
+      #{updateBy,jdbcType=INTEGER}, #{jointId,jdbcType=INTEGER}, #{gainPoints,jdbcType=INTEGER}, #{commented,jdbcType=BIT}, #{benefited,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.tiandu.order.entity.TdOrder" >
@@ -284,6 +285,9 @@
       <if test="commented != null" >
         commented,
       </if>
+      <if test="benefited != null" >
+        benefited,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderNo != null" >
@@ -355,6 +359,9 @@
       <if test="commented != null" >
         #{commented,jdbcType=BIT},
       </if>
+      <if test="benefited != null" >
+        #{benefited,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.order.entity.TdOrder" >
@@ -417,6 +424,9 @@
       <if test="commented != null" >
         commented = #{commented,jdbcType=BIT},
       </if>
+      <if test="benefited != null" >
+        benefited = #{benefited,jdbcType=INTEGER},
+      </if>
     </set>
     where order_id = #{orderId,jdbcType=INTEGER}
   </update>
@@ -444,7 +454,8 @@
       update_by = #{updateBy,jdbcType=INTEGER},
       joint_id = #{jointId,jdbcType=INTEGER},
       gain_points = #{gainPoints,jdbcType=INTEGER},
-      commented = #{commented,jdbcType=BIT}
+      commented = #{commented,jdbcType=BIT},
+      benefited = #{benefited,jdbcType=INTEGER}
     where order_id = #{orderId,jdbcType=INTEGER}
   </update>
 </mapper>

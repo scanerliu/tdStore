@@ -22,7 +22,6 @@ import com.tiandu.custom.search.TdCampaignSearchCriteria;
 import com.tiandu.custom.service.TdCampaignService;
 import com.tiandu.custom.service.TdUserService;
 import com.tiandu.district.entity.TdDistrict;
-import com.tiandu.district.search.TdDistrictSearchCriteria;
 import com.tiandu.district.service.TdDistrictService;
 
 /**
@@ -132,29 +131,6 @@ public class CampaignController extends BaseController {
 	public Map<String,String> save(TdCampaign campaign, HttpServletRequest request, HttpServletResponse response) {
 		Map<String,String> res = new HashMap<String,String>(); 
 		if(null!=campaign){
-			// 除直辖市外的市没有活动
-			TdDistrict district = tdDistrictService.findOne(campaign.getRegionId());
-			if(district.getLevel().equals(Byte.valueOf("2"))){
-				TdDistrict parentDistrict =  tdDistrictService.findOne(district.getUpid());
-				if(!isCentralCity(parentDistrict.getName())){
-					if(!isCentralCity(district.getName())){
-						res.put("code", "0");
-						res.put("msg", "除直辖市外的市没有活动。");
-						return res;
-					}					
-				}
-			}
-			// 不能选择街道
-			if(district.getLevel().equals(Byte.valueOf("3"))){
-				TdDistrict parentDistrict =  tdDistrictService.findOne(district.getUpid());
-				TdDistrict grandParentDistrict =  tdDistrictService.findOne(parentDistrict.getUpid());
-				if(isCentralCity(grandParentDistrict.getName())){
-					res.put("code", "0");
-					res.put("msg", "不能选择街道。");
-					return res;
-				}
-			}
-			
 			try {
 				if(campaign.getId() == null){
 					campaign.setCreateBy(this.getCurrentUser().getUid());
@@ -207,14 +183,6 @@ public class CampaignController extends BaseController {
 			res.put("msg", "活动删除失败。");
 			return res;
 		}
-	}
-	
-	// 是否是直辖市
-	private boolean isCentralCity(String cityName) {
-		if(cityName.indexOf("北京")>-1 || cityName.indexOf("天津")>-1 || cityName.indexOf("上海")>-1 || cityName.indexOf("重庆")>-1){
-			return true;
-		}
-		return false;
 	}
 	
 }
