@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.product.entity.mapper.TdProductMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.product.entity.TdProduct" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="kind" property="kind" jdbcType="TINYINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="postage" property="postage" jdbcType="DECIMAL" />
+    <result column="points" property="points" jdbcType="INTEGER" />
+    <result column="default_sku_id" property="defaultSkuId" jdbcType="INTEGER" />
+    <result column="brand_id" property="brandId" jdbcType="INTEGER" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="onshelf" property="onshelf" jdbcType="BIT" />
+    <result column="specification" property="specification" jdbcType="BIT" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="keyword" property="keyword" jdbcType="VARCHAR" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="new_recommend" property="newRecommend" jdbcType="INTEGER" />
+    <result column="hot_recommend" property="hotRecommend" jdbcType="INTEGER" />
+    <result column="fine_recommend" property="fineRecommend" jdbcType="INTEGER" />
+    <result column="type_recommend" property="typeRecommend" jdbcType="INTEGER" />
+    <result column="quantum" property="quantum" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="tags" property="tags" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="t_id" property="tdProductType.id"/>
+    <result column="t_name" property="tdProductType.name"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    p.id, p.kind, p.name, p.title, p.code, p.price, p.postage, p.points, p.default_sku_id, p.brand_id, p.type_id, p.uid, 
+    p.specification, p.status, p.onshelf, p.keyword, p.image_url, p.create_time, p.update_time, p.update_by, p.new_recommend, 
+    p.hot_recommend, p.fine_recommend, p.type_recommend, p.quantum, p.sort, p.tags, p.start_time, p.end_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,t.id as t_id
+    ,t.name as t_name
+    from td_product as p LEFT OUTER JOIN td_product_type t ON p.type_id=t.id
+    where 1=1
+    and p.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_product
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.product.entity.TdProduct" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_product (kind, name, title, 
+      code, price, postage, points, 
+      default_sku_id, brand_id, type_id, 
+      uid, specification, status, onshelf, 
+      keyword, image_url, create_time, 
+      update_time, update_by, new_recommend, 
+      hot_recommend, fine_recommend, type_recommend, 
+      quantum, sort, tags, 
+      start_time, end_time)
+    values (#{kind,jdbcType=TINYINT}, #{name,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{postage,jdbcType=DECIMAL}, #{points,jdbcType=INTEGER}, 
+      #{defaultSkuId,jdbcType=INTEGER}, #{brandId,jdbcType=INTEGER}, #{typeId,jdbcType=INTEGER}, 
+      #{uid,jdbcType=INTEGER}, #{specification,jdbcType=BIT}, #{status,jdbcType=TINYINT}, #{onshelf,jdbcType=BIT}, 
+      #{keyword,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{newRecommend,jdbcType=INTEGER}, 
+      #{hotRecommend,jdbcType=INTEGER}, #{fineRecommend,jdbcType=INTEGER}, #{typeRecommend,jdbcType=INTEGER}, 
+      #{quantum,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, #{tags,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.product.entity.TdProduct" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_product
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="kind != null" >
+        kind,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="postage != null" >
+        postage,
+      </if>
+      <if test="points != null" >
+        points,
+      </if>
+      <if test="defaultSkuId != null" >
+        default_sku_id,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="typeId != null" >
+        type_id,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="specification != null" >
+        specification,
+      </if>
+      <if test="onshelf != null" >
+        onshelf,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="keyword != null" >
+        keyword,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="newRecommend != null" >
+        new_recommend,
+      </if>
+      <if test="hotRecommend != null" >
+        hot_recommend,
+      </if>
+      <if test="fineRecommend != null" >
+        fine_recommend,
+      </if>
+      <if test="typeRecommend != null" >
+        type_recommend,
+      </if>
+      <if test="quantum != null" >
+        quantum,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="tags != null" >
+        tags,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="kind != null" >
+        #{kind,jdbcType=TINYINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="postage != null" >
+        #{postage,jdbcType=DECIMAL},
+      </if>
+      <if test="points != null" >
+        #{points,jdbcType=INTEGER},
+      </if>
+      <if test="defaultSkuId != null" >
+        #{defaultSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="specification != null" >
+        #{specification,jdbcType=BIT},
+      </if>
+      <if test="onshelf != null" >
+        #{onshelf,jdbcType=BIT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="keyword != null" >
+        #{keyword,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="newRecommend != null" >
+        #{newRecommend,jdbcType=INTEGER},
+      </if>
+      <if test="hotRecommend != null" >
+        #{hotRecommend,jdbcType=INTEGER},
+      </if>
+      <if test="fineRecommend != null" >
+        #{fineRecommend,jdbcType=INTEGER},
+      </if>
+      <if test="typeRecommend != null" >
+        #{typeRecommend,jdbcType=INTEGER},
+      </if>
+      <if test="quantum != null" >
+        #{quantum,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="tags != null" >
+        #{tags,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.product.entity.TdProduct" >
+    update td_product
+    <set >
+      <if test="kind != null" >
+        kind = #{kind,jdbcType=TINYINT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="postage != null" >
+        postage = #{postage,jdbcType=DECIMAL},
+      </if>
+      <if test="points != null" >
+        points = #{points,jdbcType=INTEGER},
+      </if>
+      <if test="defaultSkuId != null" >
+        default_sku_id = #{defaultSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="typeId != null" >
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="specification != null" >
+        specification = #{specification,jdbcType=BIT},
+      </if>
+      <if test="onshelf != null" >
+        onshelf = #{onshelf,jdbcType=BIT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="keyword != null" >
+        keyword = #{keyword,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="newRecommend != null" >
+        new_recommend = #{newRecommend,jdbcType=INTEGER},
+      </if>
+      <if test="hotRecommend != null" >
+        hot_recommend = #{hotRecommend,jdbcType=INTEGER},
+      </if>
+      <if test="fineRecommend != null" >
+        fine_recommend = #{fineRecommend,jdbcType=INTEGER},
+      </if>
+      <if test="typeRecommend != null" >
+        type_recommend = #{typeRecommend,jdbcType=INTEGER},
+      </if>
+      <if test="quantum != null" >
+        quantum = #{quantum,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="tags != null" >
+        tags = #{tags,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.product.entity.TdProduct" >
+    update td_product
+    set kind = #{kind,jdbcType=TINYINT},
+      name = #{name,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      postage = #{postage,jdbcType=DECIMAL},
+      points = #{points,jdbcType=INTEGER},
+      default_sku_id = #{defaultSkuId,jdbcType=INTEGER},
+      brand_id = #{brandId,jdbcType=INTEGER},
+      type_id = #{typeId,jdbcType=INTEGER},
+      uid = #{uid,jdbcType=INTEGER},
+      specification = #{specification,jdbcType=BIT},
+      onshelf = #{onshelf,jdbcType=BIT},
+      status = #{status,jdbcType=TINYINT},
+      keyword = #{keyword,jdbcType=VARCHAR},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      new_recommend = #{newRecommend,jdbcType=INTEGER},
+      hot_recommend = #{hotRecommend,jdbcType=INTEGER},
+      fine_recommend = #{fineRecommend,jdbcType=INTEGER},
+      type_recommend = #{typeRecommend,jdbcType=INTEGER},
+      quantum = #{quantum,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER},
+      tags = #{tags,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.product.search.TdProductCriteria">
+  	select count(p.id)
+    from td_product as p LEFT JOIN td_product_type t ON p.type_id=t.id
+    where 1=1
+    <if test="status != null">
+    	and p.status = #{status,jdbcType=TINYINT}
+    </if>
+    <if test="onshelf != null">
+    	and p.onshelf = #{onshelf,jdbcType=BIT}
+    </if>
+    <if test="uid != null">
+    	and p.uid = #{uid,jdbcType=INTEGER}
+    </if>
+    <if test="newRecommend != null">
+    	and p.new_recommend = #{newRecommend,jdbcType=INTEGER}
+    </if>
+    <if test="hotRecommend != null">
+    	and p.hot_recommend = #{hotRecommend,jdbcType=INTEGER}
+    </if>
+    <if test="fineRecommend != null">
+    	and p.fine_recommend = #{fineRecommend,jdbcType=INTEGER}
+    </if>
+    <if test="typeRecommend != null">
+    	and p.type_recommend = #{typeRecommend,jdbcType=INTEGER}
+    </if>
+    <if test="startTime != null">
+    	and p.start_time <![CDATA[ <=]]> #{startTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="endTime != null">
+    	and p.end_time <![CDATA[ >=]]> #{endTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="kind != null">
+    	and kind = #{kind,jdbcType=TINYINT}
+    </if>
+    <if test="typeId != null">
+    	and type_id = #{typeId,jdbcType=INTEGER}
+    </if>
+    <if test="name != null and name!=''">
+    	and p.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+    </if> 
+    <if test="keyword != null and name!=''">
+    	and p.name like CONCAT('%',#{keyword,jdbcType=VARCHAR},'%') 
+    	or p.keyword like CONCAT('%',#{keyword,jdbcType=VARCHAR},'%')
+    </if> 
+    <if test="productTypeIds != null">
+    	and p.type_id in (
+	    <foreach collection="productTypeIds" item="ptid" index="index" separator="," >  
+	        #{ptid, jdbcType=INTEGER}  
+	    </foreach>  
+	    )    	
+    </if>
+  </select>
+  
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.product.search.TdProductCriteria">
+  	select 
+  	<include refid="Base_Column_List" />
+  	,t.id as t_id
+    ,t.name as t_name
+    from td_product as p 
+    	LEFT JOIN td_product_type t ON p.type_id=t.id
+    	left join td_product_stat s on p.id = s.product_id
+    where 1=1
+    <if test="status != null">
+    	and p.status = #{status,jdbcType=TINYINT}
+    </if>
+    <if test="onshelf != null">
+    	and p.onshelf = #{onshelf,jdbcType=BIT}
+    </if>
+    <if test="uid != null">
+    	and p.uid = #{uid,jdbcType=INTEGER}
+    </if>
+    <if test="newRecommend != null">
+    	and p.new_recommend = #{newRecommend,jdbcType=INTEGER}
+    </if>
+    <if test="hotRecommend != null">
+    	and p.hot_recommend = #{hotRecommend,jdbcType=INTEGER}
+    </if>
+    <if test="fineRecommend != null">
+    	and p.fine_recommend = #{fineRecommend,jdbcType=INTEGER}
+    </if>
+    <if test="typeRecommend != null">
+    	and p.type_recommend = #{typeRecommend,jdbcType=INTEGER}
+    </if>
+    <if test="name != null and name!=''">
+    	and p.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="keyword != null and name!=''">
+    	and p.name like CONCAT('%',#{keyword,jdbcType=VARCHAR},'%') 
+    	or p.keyword like CONCAT('%',#{keyword,jdbcType=VARCHAR},'%')
+    </if> 
+    <if test="startTime != null">
+    	and p.start_time <![CDATA[ <=]]> #{startTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="endTime != null">
+    	and p.end_time <![CDATA[ >=]]> #{endTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="typeId != null">
+    	and p.type_id = #{typeId,jdbcType=INTEGER}
+    </if>
+    <if test="productTypeIds != null">
+    	and p.type_id in (
+	    <foreach collection="productTypeIds" item="ptid" index="index" separator="," >  
+	        #{ptid, jdbcType=INTEGER}  
+	    </foreach>  
+	    )    	
+    </if>
+    <if test="kind != null">
+    	and kind = #{kind,jdbcType=TINYINT}
+    </if>
+    <if test="orderBy != null">
+    	order by ${orderBy}
+    </if>
+  </select>
+  <update id="updateBatch" parameterType="Map">    
+        update td_product
+        set     
+        <if test="optype != null and optype==1">
+	    	onshelf = 1
+	    </if>
+        <if test="optype != null and optype==2">
+	    	onshelf = 0
+	    </if>
+        <if test="optype != null and optype==3">
+	    	hot_recommend = 1
+	    </if>
+        <if test="optype != null and optype==4">
+	    	hot_recommend = 0
+	    </if>
+        <if test="optype != null and optype==5">
+	    	new_recommend = 1
+	    </if>
+        <if test="optype != null and optype==6">
+	    	new_recommend = 0
+	    </if>
+        <if test="optype != null and optype==7">
+	    	fine_recommend = 1
+	    </if>
+        <if test="optype != null and optype==8">
+	    	fine_recommend = 0
+	    </if>
+        <if test="optype != null and optype==9">
+	    	type_recommend = 1
+	    </if>
+        <if test="optype != null and optype==10">
+	    	type_recommend = 0
+	    </if>
+        where id in
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+        	#{item,jdbcType=INTEGER}
+        </foreach>  
+  </update>  
+  
+</mapper>

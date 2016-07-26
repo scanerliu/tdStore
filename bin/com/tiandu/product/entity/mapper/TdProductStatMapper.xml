@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.product.entity.mapper.TdProductStatMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.product.entity.TdProductStat" >
+    <id column="product_id" property="productId" jdbcType="INTEGER" />
+    <result column="view_count" property="viewCount" jdbcType="INTEGER" />
+    <result column="buy_count" property="buyCount" jdbcType="INTEGER" />
+    <result column="buy_times" property="buyTimes" jdbcType="INTEGER" />
+    <result column="review_count" property="reviewCount" jdbcType="INTEGER" />
+    <result column="showreview_count" property="showreviewCount" jdbcType="INTEGER" />
+    <result column="positive_rate" property="positiveRate" jdbcType="INTEGER" />
+    <result column="neutral_rate" property="neutralRate" jdbcType="INTEGER" />
+    <result column="negative_rate" property="negativeRate" jdbcType="INTEGER" />
+    <result column="review_score" property="reviewScore" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    product_id, view_count, buy_count, buy_times, review_count, showreview_count, positive_rate, 
+    neutral_rate, negative_rate, review_score
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_product_stat
+    where product_id = #{productId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_product_stat
+    where product_id = #{productId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.product.entity.TdProductStat" >
+    insert into td_product_stat (product_id, view_count, buy_count, 
+      buy_times, review_count, showreview_count, 
+      positive_rate, neutral_rate, negative_rate, 
+      review_score)
+    values (#{productId,jdbcType=INTEGER}, #{viewCount,jdbcType=INTEGER}, #{buyCount,jdbcType=INTEGER}, 
+      #{buyTimes,jdbcType=INTEGER}, #{reviewCount,jdbcType=INTEGER}, #{showreviewCount,jdbcType=INTEGER}, 
+      #{positiveRate,jdbcType=INTEGER}, #{neutralRate,jdbcType=INTEGER}, #{negativeRate,jdbcType=INTEGER}, 
+      #{reviewScore,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.product.entity.TdProductStat" >
+    insert into td_product_stat
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="productId != null" >
+        product_id,
+      </if>
+      <if test="viewCount != null" >
+        view_count,
+      </if>
+      <if test="buyCount != null" >
+        buy_count,
+      </if>
+      <if test="buyTimes != null" >
+        buy_times,
+      </if>
+      <if test="reviewCount != null" >
+        review_count,
+      </if>
+      <if test="showreviewCount != null" >
+        showreview_count,
+      </if>
+      <if test="positiveRate != null" >
+        positive_rate,
+      </if>
+      <if test="neutralRate != null" >
+        neutral_rate,
+      </if>
+      <if test="negativeRate != null" >
+        negative_rate,
+      </if>
+      <if test="reviewScore != null" >
+        review_score,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="productId != null" >
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="viewCount != null" >
+        #{viewCount,jdbcType=INTEGER},
+      </if>
+      <if test="buyCount != null" >
+        #{buyCount,jdbcType=INTEGER},
+      </if>
+      <if test="buyTimes != null" >
+        #{buyTimes,jdbcType=INTEGER},
+      </if>
+      <if test="reviewCount != null" >
+        #{reviewCount,jdbcType=INTEGER},
+      </if>
+      <if test="showreviewCount != null" >
+        #{showreviewCount,jdbcType=INTEGER},
+      </if>
+      <if test="positiveRate != null" >
+        #{positiveRate,jdbcType=INTEGER},
+      </if>
+      <if test="neutralRate != null" >
+        #{neutralRate,jdbcType=INTEGER},
+      </if>
+      <if test="negativeRate != null" >
+        #{negativeRate,jdbcType=INTEGER},
+      </if>
+      <if test="reviewScore != null" >
+        #{reviewScore,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.product.entity.TdProductStat" >
+    update td_product_stat
+    <set >
+      <if test="viewCount != null" >
+        view_count = #{viewCount,jdbcType=INTEGER},
+      </if>
+      <if test="buyCount != null" >
+        buy_count = #{buyCount,jdbcType=INTEGER},
+      </if>
+      <if test="buyTimes != null" >
+        buy_times = #{buyTimes,jdbcType=INTEGER},
+      </if>
+      <if test="reviewCount != null" >
+        review_count = #{reviewCount,jdbcType=INTEGER},
+      </if>
+      <if test="showreviewCount != null" >
+        showreview_count = #{showreviewCount,jdbcType=INTEGER},
+      </if>
+      <if test="positiveRate != null" >
+        positive_rate = #{positiveRate,jdbcType=INTEGER},
+      </if>
+      <if test="neutralRate != null" >
+        neutral_rate = #{neutralRate,jdbcType=INTEGER},
+      </if>
+      <if test="negativeRate != null" >
+        negative_rate = #{negativeRate,jdbcType=INTEGER},
+      </if>
+      <if test="reviewScore != null" >
+        review_score = #{reviewScore,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where product_id = #{productId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.product.entity.TdProductStat" >
+    update td_product_stat
+    set view_count = #{viewCount,jdbcType=INTEGER},
+      buy_count = #{buyCount,jdbcType=INTEGER},
+      buy_times = #{buyTimes,jdbcType=INTEGER},
+      review_count = #{reviewCount,jdbcType=INTEGER},
+      showreview_count = #{showreviewCount,jdbcType=INTEGER},
+      positive_rate = #{positiveRate,jdbcType=INTEGER},
+      neutral_rate = #{neutralRate,jdbcType=INTEGER},
+      negative_rate = #{negativeRate,jdbcType=INTEGER},
+      review_score = #{reviewScore,jdbcType=DECIMAL}
+    where product_id = #{productId,jdbcType=INTEGER}
+  </update>
+</mapper>

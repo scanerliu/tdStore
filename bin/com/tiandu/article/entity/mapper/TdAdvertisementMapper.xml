@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.article.entity.mapper.TdAdvertisementMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.article.entity.TdAdvertisement" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ads_id" property="adsId" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="link_url" property="linkUrl" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="region_id" property="regionId" jdbcType="INTEGER" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <!-- 广告位 -->
+    <association property="adsense" resultMap="adsenseResult"/>
+  </resultMap>
+  
+  <resultMap id="adsenseResult" type="com.tiandu.article.entity.TdAdsense" >
+  	<result column="t_name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    a.id, a.ads_id, a.title, a.image_url, a.link_url, a.sort, a.status, a.create_time, a.create_by, a.update_time, 
+    a.update_by, a.region_id,a.end_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_advertisement a
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_advertisement
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.article.entity.TdAdvertisement" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_advertisement (ads_id, title, image_url, 
+      link_url, sort, status, 
+      create_time, create_by, update_time, 
+      update_by, region_id,end_time)
+    values (#{adsId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, 
+      #{linkUrl,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=INTEGER}, #{regionId,jdbcType=INTEGER}, #{endTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.article.entity.TdAdvertisement" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_advertisement
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="adsId != null" >
+        ads_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="linkUrl != null" >
+        link_url,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="regionId != null" >
+        region_id,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="adsId != null" >
+        #{adsId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="linkUrl != null" >
+        #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="regionId != null" >
+        #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.article.entity.TdAdvertisement" >
+    update td_advertisement
+    <set >
+      <if test="adsId != null" >
+        ads_id = #{adsId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="linkUrl != null" >
+        link_url = #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="regionId != null" >
+        region_id = #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.article.entity.TdAdvertisement" >
+    update td_advertisement
+    set ads_id = #{adsId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      link_url = #{linkUrl,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      region_id = #{regionId,jdbcType=INTEGER},
+      end_time = #{endTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.article.search.TdAdvertisementSearchCriteria">
+  	select count(a.id)
+    from td_advertisement a
+    where 1=1
+     <if test="status != null" >
+       	and  a.status = #{status,jdbcType=TINYINT}
+      </if> 
+   	  <if test="adsId != null" >
+       	and  a.ads_id = #{adsId,jdbcType=TINYINT}
+      </if>
+      <if test="createTime != null" >
+       	and  a.create_time <![CDATA[<=]]> #{createTime,jdbcType=TIMESTAMP} 
+      </if>
+      <if test="endTime != null" >
+       	and  a.end_time <![CDATA[>=]]> #{endTime,jdbcType=TIMESTAMP}
+      </if>
+  </select>
+  
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.article.search.TdAdvertisementSearchCriteria">
+  	select 
+  	<include refid="Base_Column_List" />
+  	 , t.name as t_name
+    from td_advertisement a
+    	left join td_adsense t on t.id= a.ads_id 
+     where 1=1 
+     <if test="status != null" >
+       	and  a.status = #{status,jdbcType=TINYINT}
+      </if> 
+      <if test="adsId != null" >
+       	and  a.ads_id = #{adsId,jdbcType=TINYINT}
+      </if>
+      <if test="createTime != null" >
+       	and  a.create_time <![CDATA[<=]]> #{createTime,jdbcType=TIMESTAMP} 
+      </if>
+      <if test="endTime != null" >
+       	and  a.end_time <![CDATA[>=]]> #{endTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="orderBy != null" >
+      	<if test="orderBy ==1">
+      		order by  a.sort desc
+      	</if>
+      	<if  test="orderBy ==2">
+	      	order by a.sort asc
+      	</if>
+      </if>
+  </select>
+  
+</mapper>

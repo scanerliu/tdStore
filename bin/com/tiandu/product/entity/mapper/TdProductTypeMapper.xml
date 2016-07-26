@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.product.entity.mapper.TdProductTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.product.entity.TdProductType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <collection property="tdProductTypeAttributeList" resultMap="TAResult"/>
+  </resultMap>
+  <resultMap type="com.tiandu.product.entity.TdProductTypeAttribute" id="TAResult">
+	<id column="ta_id" property="id" jdbcType="INTEGER" />
+    <result column="ta_typeid" property="typeId" jdbcType="INTEGER" />
+    <result column="ta_attriid" property="attriId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    t.id, t.name, t.parent_id, t.create_time, t.update_time, t.update_by, t.status, t.image_url, t.sort
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,ta.id as ta_id
+    ,ta.type_id as ta_typeid
+    ,ta.attri_id as ta_attriid
+    from td_product_type as t LEFT OUTER JOIN td_product_type_attribute ta ON t.id=ta.type_id
+    where t.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_product_type
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.product.entity.TdProductType" >
+    insert into td_product_type (id, name, parent_id, 
+      create_time, update_time, update_by, 
+      status, image_url, sort
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, 
+      #{status,jdbcType=TINYINT}, #{imageUrl,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.product.entity.TdProductType" >
+    insert into td_product_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.product.entity.TdProductType" >
+    update td_product_type
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.product.entity.TdProductType" >
+    update td_product_type
+    set name = #{name,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.product.search.TdProductTypeCriteria">
+  	select count(t.id)
+    from td_product_type as t LEFT OUTER JOIN td_product_type_attribute ta ON t.id=ta.type_id
+    where 1=1 
+    <if test="parentId != null">
+        and t.parent_id=#{parentId,jdbcType=INTEGER}
+    </if>
+    <if test="status != null">
+        and status=#{status,jdbcType=INTEGER}
+    </if>
+    <if test="orderBy != null" >
+      	<if test="orderBy ==1">
+      		order by  a.sort desc
+      	</if>
+      	<if  test="orderBy ==2">
+	      	order by a.sort asc
+      	</if>
+      </if>
+  </select>
+  
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.product.search.TdProductTypeCriteria">
+  	select 
+  	<include refid="Base_Column_List" />
+  	,ta.id as ta_id
+    ,ta.type_id as ta_typeid
+    ,ta.attri_id as ta_attriid
+    from td_product_type as t LEFT OUTER JOIN td_product_type_attribute ta ON t.id=ta.type_id
+    where 1=1
+    <if test="parentId != null">
+        and t.parent_id=#{parentId,jdbcType=INTEGER}
+    </if>
+    <if test="status != null">
+        and status=#{status,jdbcType=INTEGER}
+    </if>
+    <if test="orderBy != null" >
+      	<if test="orderBy ==1">
+      		order by  sort desc
+      	</if>
+      	<if  test="orderBy ==2">
+	      	order by sort asc
+      	</if>
+     </if>
+  </select>
+  
+  <select id="findByParentId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select 
+  	<include refid="Base_Column_List" />
+  	,ta.id as ta_id
+    ,ta.type_id as ta_typeid
+    ,ta.attri_id as ta_attriid
+    from td_product_type as t LEFT OUTER JOIN td_product_type_attribute ta ON t.id=ta.type_id
+    where t.parent_id = #{parentId,jdbcType=INTEGER}
+  </select>
+  
+</mapper>

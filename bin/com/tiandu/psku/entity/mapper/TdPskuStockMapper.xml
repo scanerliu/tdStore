@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.psku.entity.mapper.TdPskuStockMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.psku.entity.TdPskuStock" >
+    <id column="sku_id" property="skuId" jdbcType="INTEGER" />
+    <result column="quantum" property="quantum" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    sku_id, quantum
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_psku_stock
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_psku_stock
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.psku.entity.TdPskuStock" >
+    insert into td_psku_stock (sku_id, quantum)
+    values (#{skuId,jdbcType=INTEGER}, #{quantum,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.psku.entity.TdPskuStock" >
+    insert into td_psku_stock
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+      <if test="quantum != null" >
+        quantum,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="skuId != null" >
+        #{skuId,jdbcType=INTEGER},
+      </if>
+      <if test="quantum != null" >
+        #{quantum,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.psku.entity.TdPskuStock" >
+    update td_psku_stock
+    <set >
+      <if test="quantum != null" >
+        quantum = #{quantum,jdbcType=INTEGER},
+      </if>
+    </set>
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.psku.entity.TdPskuStock" >
+    update td_psku_stock
+    set quantum = #{quantum,jdbcType=INTEGER}
+    where sku_id = #{skuId,jdbcType=INTEGER}
+  </update>
+</mapper>

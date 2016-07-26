@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"  
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"  
+    xmlns:cache="http://www.springframework.org/schema/cache"  
+    xsi:schemaLocation="  
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context.xsd  
+    http://www.springframework.org/schema/beans  
+    http://www.springframework.org/schema/beans/spring-beans.xsd  
+    http://www.springframework.org/schema/tx  
+    http://www.springframework.org/schema/tx/spring-tx.xsd  
+    http://www.springframework.org/schema/jdbc  
+    http://www.springframework.org/schema/jdbc/spring-jdbc.xsd  
+    http://www.springframework.org/schema/cache  
+    http://www.springframework.org/schema/cache/spring-cache.xsd  
+    http://www.springframework.org/schema/aop  
+    http://www.springframework.org/schema/aop/spring-aop.xsd  
+    http://www.springframework.org/schema/util  
+    http://www.springframework.org/schema/util/spring-util.xsd">
+  
+  <!-- <context:property-placeholder location="classpath:/conf/property/db-config.properties"/> -->
+  <!-- 数据源  -->
+  <!--主数据源   支持读写  -->
+	<bean id="dbSourceRW"  class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url1}" />
+		<property name="username" value="${jdbc.username1}" />
+		<property name="password" value="${jdbc.password1}" />
+		<!-- druid 连接池的 -->
+		<property name="filters" value="stat" />
+		<!--maxActive: 最大连接数量 -->
+		<property name="maxActive" value="20" />
+		<!--initialSize: 初始化连接 -->
+		<property name="initialSize" value="5" />
+	</bean>
+	<!--附属数据源  只用来读-->
+    <bean id="dbSourceR"  class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url2}" />
+		<property name="username" value="${jdbc.username2}" />
+		<property name="password" value="${jdbc.password2}" />
+		<!-- druid 连接池的 -->
+        <property name="filters" value="stat" />
+        <!--maxActive: 最大连接数量 -->
+        <property name="maxActive" value="20" />
+        <!--initialSize: 初始化连接 -->
+        <property name="initialSize" value="5" />
+    </bean>
+    <!-- 动态数据源 -->
+    <bean id="dynamicDataSource" class="com.tiandu.common.db.DynamicDataSource">
+        <!-- 通过key-value关联数据源 -->
+        <property name="targetDataSources">
+            <map>
+                <entry value-ref="dbSourceRW"    key="readwritedb"></entry>
+                <entry value-ref="dbSourceR"    key="readdb"></entry>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource"  ref="dbSourceRW" />    
+    </bean>
+    <!--  会话工厂    完美整合 mybatis， 不需要mybatis配置文件-->
+	<bean  name="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!--  加载mybatis配置文件  已经不需要 mybatis配置文件了-->
+		<property name="configLocation"  value="classpath:conf/mybatis/mybatis-config.xml"></property>
+        <property name="dataSource"  ref="dynamicDataSource" ></property>
+        <!-- 自动扫描mapping.xml文件  支持通配符 com/zms/hengjinsuo/*/mapping/*.xml -->
+        <property name="mapperLocations" value="classpath:com/tiandu/**/mapper/**.xml"></property>
+	</bean>
+  
+	<!--  事务管理配置 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	  <property name="dataSource" ref="dbSourceRW"></property>
+	</bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	  <property name="basePackage" value="com.tiandu.*.entity.mapper" />
+	</bean>
+	<!-- 自动扫描(自动注入)，扫描me.gacl.service这个包以及它的子包的所有使用@Service注解标注的类 -->
+    <context:component-scan base-package="com.tiandu.*.service" />
+    <bean id="configUtil" class="com.tiandu.system.utils.ConfigUtil" lazy-init="false" factory-method="getInstance" autowire="byName">
+		<property name="tdSystemConfigService" ref="tdSystemConfigService" />
+	</bean>
+  
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+	  <tx:attributes >
+	    <tx:method name="query*" propagation="REQUIRED" />
+	    <tx:method name="insert*" propagation="REQUIRED" />
+	    <tx:method name="update*" propagation="REQUIRED" />
+	    <tx:method name="save*" propagation="REQUIRED" />
+	  </tx:attributes>
+	</tx:advice>
+  
+	<aop:config >
+	  <aop:pointcut expression="execution(* com.tiandu.*.service.*.*(..))" id="service"/>
+	  <aop:advisor advice-ref="txAdvice" pointcut-ref="service"/>
+	</aop:config>
+</beans>

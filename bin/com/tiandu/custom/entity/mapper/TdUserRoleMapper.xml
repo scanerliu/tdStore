@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.custom.entity.mapper.TdUserRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.custom.entity.TdUserRole" >
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="rid" property="rid" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="com.tiandu.custom.entity.TdUserRole" >
+    insert into td_user_role (uid, rid)
+    values (#{uid,jdbcType=INTEGER}, #{rid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.custom.entity.TdUserRole" >
+    insert into td_user_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="rid != null" >
+        rid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="rid != null" >
+        #{rid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <insert id="insertUserRoles" useGeneratedKeys="true" parameterType="com.tiandu.custom.entity.TdUser">  
+    insert into td_user_role (uid, rid)   
+    values  
+    <foreach collection="roleSet" item="item" index="index" separator="," >  
+        (#{uid},#{item.id})  
+    </foreach>  
+  </insert>
+  <delete id="deleteByUser" parameterType="com.tiandu.custom.entity.TdUser" >
+    delete from td_user_role
+    where uid = #{uid,jdbcType=INTEGER}
+  </delete>
+</mapper>
