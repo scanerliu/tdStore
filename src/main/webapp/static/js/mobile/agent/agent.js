@@ -143,3 +143,52 @@ function three_bing(){
 		}
 	}
 }
+
+function citylist(){
+	// 三级联动
+	var tarea=document.getElementById('tarea');
+	var oSec=tarea.getElementsByTagName('section');
+	var oSpan=tarea.getElementsByTagName('span');
+	var oSelect=tarea.getElementsByTagName('select');
+	for(i=0;i<oSec.length;i++){
+		oSec[i].index=i;
+		oSec[i].onclick=function(){
+			// alert(this.index);
+			choose(this.index);
+		}
+	}
+	function choose(num){
+		oSelect[num].style.display="block";
+		oSelect[num].addEventListener("click",function(){},false);
+		oSelect[num].onchange=function(){
+			oSpan[num].innerHTML=oSelect[num].value;
+			oSelect[num].style.display="none";
+			//searchExper(false);
+			searcAgentAddr();
+		}
+	}
+}
+
+function searcAgentAddr()
+{
+	var url = basePath + "/mobile/agent/search/addr";
+	var loadData = $("#form").serializeArray();
+	
+	$("#tarea").load(url,loadData);
+}
+
+function deleteProduct(id){
+	var url = basePath+"/mobile/agent/addagent";
+	var loadData = $("#form").serializeArray();
+	$.post(url,loadData,saveCallback,"text");
+}
+
+function delProductTypeCallback(data){
+	var result = eval("("+data+")");
+	if(result.code==1){
+		$("#pay_warn").css("display","block")
+	}else{
+		alert(result.msg);
+	}
+}
+

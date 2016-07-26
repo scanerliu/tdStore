@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.product.entity.mapper.TdBrandMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.product.entity.TdBrand" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="sort_by" property="sortBy" jdbcType="INTEGER" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <!-- 更新人信息 -->
+	<association property="updateUser" resultMap="updateUserResult"/>
+  </resultMap>
+  
+   <resultMap id="updateUserResult" type="com.tiandu.custom.entity.TdUser" >
+  	<result column="up_uname" property="uname" jdbcType="VARCHAR" />
+  	<result column="up_unick" property="unick" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    b.id, b.name, b.image_url, b.status, b.sort_by, b.update_by, b.update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_brand b
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.product.search.TdBrandSearchCriteria" >
+    select 
+    <include refid="Base_Column_List" />
+    <if test="getUpdateUser" >
+        , u.uname as up_uname, u.unick as up_unick
+    </if>
+    from td_brand b
+    <if test="getUpdateUser" >
+        left join td_user u on u.uid= b.update_by
+    </if>
+    where 1=1 
+  </select>
+  
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.product.search.TdBrandSearchCriteria" >
+    select count(id)
+    from td_brand
+    where 1=1 
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_brand
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.product.entity.TdBrand" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_brand (name, image_url, status, sort_by, 
+      update_by, update_time)
+    values (#{name,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{sortBy,jdbcType=INTEGER}, 
+      #{updateBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.product.entity.TdBrand" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_brand
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="sortBy != null" >
+        sort_by,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="sortBy != null" >
+        #{sortBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.product.entity.TdBrand" >
+    update td_brand
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="sortBy != null" >
+        sort_by = #{sortBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.product.entity.TdBrand" >
+    update td_brand
+    set name = #{name,jdbcType=VARCHAR},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      sort_by = #{sortBy,jdbcType=INTEGER},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

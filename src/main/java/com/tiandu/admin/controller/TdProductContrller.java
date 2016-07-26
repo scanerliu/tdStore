@@ -87,7 +87,7 @@ public class TdProductContrller extends BaseController{
 	private TdBrandService tdBrandService;
 	
 	@RequestMapping("/list")
-	public String list(TdProductCriteria sc, HttpServletRequest req,ModelMap map){
+	public String list(TdProductCriteria sc, HttpServletRequest req, ModelMap map){
 		map.addAttribute("sc", sc);
 		return "/admin/product/list";
 	}
@@ -95,6 +95,7 @@ public class TdProductContrller extends BaseController{
 	@RequestMapping("/search")
 	public String search(TdProductCriteria sc,HttpServletRequest req,ModelMap map)
 	{
+		sc.setIsNormalProduct(true);
 		map.addAttribute("productList", tdProductService.findBySearchCriteria(sc));
 		map.addAttribute("sc", sc);
 		

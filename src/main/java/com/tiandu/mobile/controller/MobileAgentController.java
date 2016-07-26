@@ -1,6 +1,11 @@
 package com.tiandu.mobile.controller;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tiandu.article.entity.TdArticleCategory;
 import com.tiandu.article.entity.TdArticleTitle;
@@ -18,8 +24,12 @@ import com.tiandu.article.service.TdArticleCategoryService;
 import com.tiandu.article.service.TdArticleContentService;
 import com.tiandu.article.service.TdArticleTitleService;
 import com.tiandu.common.controller.BaseController;
+import com.tiandu.custom.entity.TdAgent;
 import com.tiandu.custom.entity.TdExperienceStore;
+import com.tiandu.custom.entity.TdUser;
+import com.tiandu.custom.search.TdAgentSearchCriteria;
 import com.tiandu.custom.search.TdExperienceStoreSearchCriteria;
+import com.tiandu.custom.service.TdAgentService;
 import com.tiandu.custom.service.TdExperienceStoreService;
 import com.tiandu.district.entity.TdDistrict;
 import com.tiandu.district.search.TdDistrictSearchCriteria;
@@ -60,6 +70,9 @@ public class MobileAgentController extends BaseController{
 	private TdExperienceStoreService tdExperienceStoreService;
 	
 	@Autowired
+	private TdAgentService tdAgentService;
+	
+	@Autowired
 	private TdDistrictService tdDistrictService;
 	
 	@RequestMapping("/list")
@@ -89,35 +102,121 @@ public class MobileAgentController extends BaseController{
 		}
 		
 		map.addAttribute("agent", agent);
-		if("单类代理".equals(agent.getGroupIdStr()))
-		{
-			// 查找所有分类
-//			TdProductTypeCriteria sc = new TdProductTypeCriteria();
-//			sc.setStatus((byte)1);
-//			sc.setOrderBy("2");
-//			map.addAttribute("typeList", tdProductTypeService.findAll(sc));
-//			
-//			TdDistrictSearchCriteria dsc = new TdDistrictSearchCriteria();
-//			dsc.setFlag(false);
-//			dsc.setUpid(0);
-//			map.addAttribute("districtList", tdDistrictService.findBySearchCriteria(dsc));
-//			map.addAttribute("dissc", dsc);
-//			
-//			// 代理查询条件
-//			TdExperienceStoreSearchCriteria esc = new TdExperienceStoreSearchCriteria();
-//			// 查找全国所有代理
-//			esc.setRegionId(0);
-//			esc.setFlag(false);
-//			List<TdExperienceStore> ecperList = tdExperienceStoreService.findBySearchCriteria(esc);
-//			
-//			map.addAttribute("experTypeIds",getExperTypeIds(ecperList));
-		}
-		else if("分公司".equals(agent.getGroupIdStr()))
+		
+		if("分公司".equals(agent.getGroupIdStr()))
 		{
 			return "/mobile/agent/company";
 		}
+		if(agent.getLevel() == 4)
+		{
+			return "/mobile/agent/agentform";
+		}
 		
 		return "/mobile/agent/typelist";
+	}
+	
+	@RequestMapping("/search/addr")
+	public String searchAddr(TdDistrictSearchCriteria sc,HttpServletRequest req,ModelMap map)
+	{
+		sc.setFlag(false);
+		sc.setUpid(0);
+		map.addAttribute("districtList", tdDistrictService.findBySearchCriteria(sc));
+		map.addAttribute("dissc", sc);
+		
+		
+		// 如果选择省级，查找市级
+		if(null != sc.getProvinceId())
+		{
+			sc.setUpid(sc.getProvinceId());
+			map.addAttribute("cityList", tdDistrictService.findBySearchCriteria(sc));
+			
+			map.addAttribute("province", tdDistrictService.findOne(sc.getProvinceId()));
+		}
+			
+		// 如果选择市级，查找区县级
+		if(null != sc.getCityId())
+		{
+			sc.setUpid(sc.getCityId());
+			map.addAttribute("regionList", tdDistrictService.findBySearchCriteria(sc));
+			
+			map.addAttribute("city",tdDistrictService.findOne(sc.getCityId()));
+		}
+		
+		// 选择区县级，复制代理查询地区ID参数
+		if(null != sc.getRegionId())
+		{
+			map.addAttribute("regin",tdDistrictService.findOne(sc.getRegionId()));
+		}
+		return "/mobile/agent/agent_addr";
+	}
+	
+	/**
+	 * 
+	 * @author Max
+	 * 
+	 * 保存体验店
+	 * 
+	 */
+	@RequestMapping(value= "/addagent", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> agentAdd(TdExperienceStore experience,
+				Integer provinceId,Integer cityId,
+				HttpServletRequest req,ModelMap map)
+	{
+		Map<String,Object> res = new HashMap<>();
+		res.put("code", 0);
+		TdUser user = this.getCurrentUser();
+		if(null == user){
+			res.put("code", "请重新登录");
+			return res;
+		}
+		
+		if(null == experience)
+		{
+			res.put("msg", "参数错误");
+			return res;
+		}
+		if(null == experience.getRegionId()){
+			res.put("msg", "请正确选择地区");
+			return res;
+		}
+		if(null == experience.getAddress() || "".equals(experience.getAddress().trim())){
+			res.put("msg", "请输入信息地址");
+			return res;
+		}
+		if(null == experience.getTelphone() || !isMobileNO(experience.getTelphone())){
+			res.put("msg", "请正确输入手机号");
+			return res;
+		}
+		
+		experience.setUid(user.getUid());
+		TdDistrict province = tdDistrictService.findOne(provinceId);
+		TdDistrict city = tdDistrictService.findOne(cityId);
+		TdDistrict district = tdDistrictService.findOne(experience.getRegionId());
+		
+		StringBuffer str = new StringBuffer();
+		if(null != province){
+			str.append(province.getName());
+		}
+		if(null != city){
+			str.append(city.getName());
+		}
+		if(null != district){
+			str.append(district.getName());
+		}
+		if(null != experience.getAddress()){
+			str.append(experience.getAddress());
+		}
+		// 详细地址
+		experience.setRegionFullName(str.toString());
+		experience.setStatus((byte)2);
+		experience.setCreateTime(new Date());
+		experience.setSort(1);
+		
+		tdExperienceStoreService.save(experience);
+		res.put("code", 1);
+		
+		return res;
 	}
 	
 	/**
@@ -150,6 +249,7 @@ public class MobileAgentController extends BaseController{
 		
 		// 代理查询条件
 		TdExperienceStoreSearchCriteria esc = new TdExperienceStoreSearchCriteria();
+		TdAgentSearchCriteria asc = new TdAgentSearchCriteria();
 		
 		// 一级地区
 		sc.setFlag(false);
@@ -164,7 +264,7 @@ public class MobileAgentController extends BaseController{
 			if(null != sc.getProvinceId())
 			{
 				map.addAttribute("msg", "当前选择为全国代理，无需选择下级地区");
-				esc.setRegionId(0);
+				asc.setRegionId(0);
 			}
 		}
 		else
@@ -177,7 +277,7 @@ public class MobileAgentController extends BaseController{
 				district = tdDistrictService.findOne(sc.getProvinceId());
 				
 				map.addAttribute("province", district);
-				esc.setRegionId(sc.getProvinceId());
+				asc.setRegionId(sc.getProvinceId());
 			}
 		}
 			
@@ -200,23 +300,25 @@ public class MobileAgentController extends BaseController{
 				district = tdDistrictService.findOne(sc.getCityId());
 				
 				map.addAttribute("city",district);
-				esc.setRegionId(sc.getCityId());
+				asc.setRegionId(sc.getCityId());
 			}
 			
 			// 选择区县级，复制代理查询地区ID参数
 			if(null != sc.getRegionId())
 			{
 				district = tdDistrictService.findOne(sc.getRegionId());
-				esc.setRegionId(sc.getRegionId());
+				asc.setRegionId(sc.getRegionId());
 				map.addAttribute("regin",district);
 			}
 		}
 		
 		// 查找当前选择地区已的所有代理
 		esc.setFlag(false);
-		List<TdExperienceStore> ecperList = tdExperienceStoreService.findBySearchCriteria(esc);
+//		List<TdExperienceStore> ecperList = tdExperienceStoreService.findBySearchCriteria(esc);
 		
-		map.addAttribute("experTypeIds",getExperTypeIds(ecperList));
+		List<TdAgent> agentList = tdAgentService.findBySearchCriteria(asc);
+		
+		map.addAttribute("experTypeIds",getExperTypeIds(agentList));
 		map.addAttribute("district", district);
 		
 		return "/mobile/agent/typelist_body";
@@ -267,7 +369,24 @@ public class MobileAgentController extends BaseController{
 		return "/mobile/agent/article";
 	}
 	
-	
+	@RequestMapping("/exper")
+	public String exper(Integer id,HttpServletRequest req,ModelMap map)
+	{
+		TdUser user = getCurrentUser();
+		
+		if(user == null)
+		{
+			return "redirect:/mobile/login";
+		}
+		if(null == id ){
+			return "redirect:404";
+		}
+		
+//		new 
+		
+		
+		return "";
+	}
 	
 	
 	@RequestMapping("/dopay")
@@ -286,22 +405,18 @@ public class MobileAgentController extends BaseController{
 	 * @author Max
 	 * 
 	 */
-	public String getExperTypeIds(List<TdExperienceStore> experList)
+	public String getExperTypeIds(List<TdAgent> agentList)
 	{
 		StringBuffer ids = new StringBuffer();
 		
-		if(null != experList && experList.size() > 0)
+		if(null != agentList && agentList.size() > 0)
 		{
-			for (TdExperienceStore tdExperienceStore : experList) {
-				if(null != tdExperienceStore.getStoreTypeIds())
-				{
-					String[] typeids = tdExperienceStore.getStoreTypeIds().split(",");
-					for (int i = 0; i < typeids.length; i++) 
+			for (TdAgent agent : agentList) {
+				if(null != agent.getProductTypeId()){
+					Integer typeId= agent.getProductTypeId();
+					if(!ids.toString().contains("["+typeId+"]"))
 					{
-						if(!ids.toString().contains(typeids[i]))
-						{
-							ids.append(typeids[i]);
-						}
+						ids.append("["+typeId+"]");
 					}
 				}
 			}
@@ -309,4 +424,9 @@ public class MobileAgentController extends BaseController{
 		return ids.toString();
 	}
 	
+	public boolean isMobileNO(String mobiles) {
+		Pattern p = Pattern.compile("^(0|86|17951|[0-9]{3})?([0-9]{8})|((13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8})$");
+		Matcher m = p.matcher(mobiles);
+		return m.matches();
+		}
 }

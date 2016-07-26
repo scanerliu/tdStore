@@ -139,6 +139,10 @@ public class ConstantsUtils {
 	 * 订单发货状态： 4 全部退货
 	 */
 	public static final Byte ORDER_SHIPMENT_STATUS_All_RETURN = 4;
+	/**
+	 * 订单发货状态： 5 已收货
+	 */
+	public static final Byte ORDER_SHIPMENT_STATUS_RECEIPT = 5;
 	
 	/**发货单类型**/
 	/**
@@ -162,6 +166,22 @@ public class ConstantsUtils {
 	 * 订单操作日志类型： 3订单完成
 	 */
 	public static final Byte ORDER_LOG_TYPE_COMPLETE = 3;
+	/**
+	 * 订单操作日志类型： 4订单收货
+	 */
+	public static final Byte ORDER_LOG_TYPE_RECEIPT = 4;
+	/**
+	 * 订单操作日志类型： 5订单收款
+	 */
+	public static final Byte ORDER_LOG_TYPE_PAY = 5;
+	/**
+	 * 订单操作日志类型： 6订单分配代理
+	 */
+	public static final Byte ORDER_LOG_TYPE_AGENT = 6;
+	/**
+	 * 订单操作日志类型： 7订单分润
+	 */
+	public static final Byte ORDER_LOG_TYPE_BENEFIT = 7;
 	
 	/***************************订单支付方式**************************/
 	/**

@@ -2,10 +2,6 @@ function searchOrders(f){
 	var url = basePath+"/mobile/order/search";
 	var loadData = "";
 	$(window).off("scroll", scrollHandler);
-	var fliter = $("#sc_fliterType").val();
-	if(fliter==5){
-		url = basePath+"/mobile/order/searchreturn";
-	}
 	if(f){
 		loadData = $("#searchform").serializeArray();
 		$("#results").loading().load(url,loadData);
@@ -39,26 +35,4 @@ function applyComplaint(){
 		return ;
 	}
 	$("#complaintForm").submit();
-}
-
-function refundtract(){
-	var trackingNo = $("#trackingNo").val();
-	if(trackingNo==""||trackingNo.length<3){
-		alert("请正确填写物流单号！");
-		return ;
-	}
-	var url = basePath+"/mobile/order/savetract";
-	var postData = $("#tractForm").serializeArray();
-	$.post(url,postData,refundtractCallback,'text');
-	
-}
-
-function refundtractCallback(data){
-	var result = eval("("+data+")");
-	if(result.code==1){
-		alert("物流单号录入成功。");
-		window.history.go(-1);
-	}else{
-		alert(result.msg);
-	}
 }

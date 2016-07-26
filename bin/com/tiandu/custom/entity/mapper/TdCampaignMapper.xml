@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.custom.entity.mapper.TdCampaignMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.custom.entity.TdCampaign" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="region_id" property="regionId" jdbcType="INTEGER" />
+    <result column="quota" property="quota" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    
+    <association property="createPerson" resultMap="CreatePersonResult"/>
+	<association property="updatePerson" resultMap="UpdatePersonResult"/>
+	<association property="district" resultMap="DistrictResult"/>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.tiandu.custom.entity.TdCampaign" extends="BaseResultMap" >
+    <result column="note" property="note" jdbcType="LONGVARCHAR" />
+    <association property="createPerson" resultMap="CreatePersonResult"/>
+	<association property="updatePerson" resultMap="UpdatePersonResult"/>
+	<association property="district" resultMap="DistrictResult"/>
+  </resultMap>
+  <resultMap id="CreatePersonResult" type="com.tiandu.custom.entity.TdUser" >
+  	<result column="createname" property="uname" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="UpdatePersonResult" type="com.tiandu.custom.entity.TdUser" >
+  	<result column="updatename" property="uname" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="DistrictResult" type="com.tiandu.district.entity.TdDistrict" >
+  	<result column="districtname" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    p.id, p.region_id, p.quota, p.status, p.create_time, p.create_by, p.update_time, p.update_by
+  </sql>
+  <sql id="Blob_Column_List" >
+    p.note
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    , c.uname as createname
+    , u.uname as updatename
+    , d.name as districtname
+    from td_campaign as p
+    left join td_user c on c.uid= p.create_by
+    left join td_user u on u.uid= p.update_by
+    left join td_district d on d.id= p.region_id
+    where p.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_campaign
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.custom.entity.TdCampaign" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_campaign (region_id, quota, status, 
+      create_time, create_by, update_time, 
+      update_by, note)
+    values (#{regionId,jdbcType=INTEGER}, #{quota,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=INTEGER}, #{note,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.custom.entity.TdCampaign" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_campaign
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="regionId != null" >
+        region_id,
+      </if>
+      <if test="quota != null" >
+        quota,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="note != null" >
+        note,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="regionId != null" >
+        #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="quota != null" >
+        #{quota,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.custom.entity.TdCampaign" >
+    update td_campaign
+    <set >
+      <if test="regionId != null" >
+        region_id = #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="quota != null" >
+        quota = #{quota,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="note != null" >
+        note = #{note,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.tiandu.custom.entity.TdCampaign" >
+    update td_campaign
+    set region_id = #{regionId,jdbcType=INTEGER},
+      quota = #{quota,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      note = #{note,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.custom.entity.TdCampaign" >
+    update td_campaign
+    set region_id = #{regionId,jdbcType=INTEGER},
+      quota = #{quota,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.custom.search.TdCampaignSearchCriteria" >
+    select count(p.id)
+    from td_campaign as p
+    <if test="isAssociationcCreatePerson">
+        left join td_user c on c.uid= p.create_by
+    </if>
+    <if test="isAssociationUpdatePerson">
+        left join td_user u on u.uid= p.update_by
+    </if>
+    <if test="isAssociationTdDistrict" >
+        left join td_district d on d.id= p.region_id
+    </if>
+    where 1=1 
+    <if test="id != null" >
+        and p.id=#{id,jdbcType=INTEGER}
+    </if>
+    <if test="regionId != null">
+        and p.region_id=#{regionId,jdbcType=INTEGER}
+    </if>
+    <if test="createBy != null" >
+        and p.create_by=#{createBy,jdbcType=INTEGER}
+    </if>
+    <if test="updateBy != null" >
+        and p.update_by=#{updateBy,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.custom.search.TdCampaignSearchCriteria" >
+    select 
+    <include refid="Base_Column_List" />,
+    <include refid="Blob_Column_List" />
+    
+    <if test="isAssociationcCreatePerson">
+        , c.uname as createname
+    </if>
+    <if test="isAssociationUpdatePerson">
+        , u.uname as updatename
+    </if>
+    <if test="isAssociationTdDistrict" >
+        , d.name as districtname
+    </if>
+    from td_campaign as p
+    <if test="isAssociationcCreatePerson">
+        left join td_user c on c.uid= p.create_by
+    </if>
+    <if test="isAssociationUpdatePerson">
+        left join td_user u on u.uid= p.update_by
+    </if>
+    <if test="isAssociationTdDistrict" >
+        left join td_district d on d.id= p.region_id
+    </if>
+    where 1=1 
+    <if test="id != null" >
+        and p.id=#{id,jdbcType=INTEGER}
+    </if>
+    <if test="regionId != null">
+        and p.region_id=#{regionId,jdbcType=INTEGER}
+    </if>
+    <if test="createBy != null" >
+        and p.create_by=#{createBy,jdbcType=INTEGER}
+    </if>
+    <if test="updateBy != null" >
+        and p.update_by=#{updateBy,jdbcType=INTEGER}
+    </if>
+  </select>
+</mapper>

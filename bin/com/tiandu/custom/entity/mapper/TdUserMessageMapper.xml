@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.custom.entity.mapper.TdUserMessageMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.custom.entity.TdUserMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="msg_type" property="msgType" jdbcType="TINYINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="relate_id" property="relateId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <association property="user" resultMap="UserResult"/>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.tiandu.custom.entity.TdUserMessage" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <association property="user" resultMap="UserResult"/>
+  </resultMap>
+  <resultMap id="UserResult" type="com.tiandu.custom.entity.TdUser" >
+  	<result column="username" property="uname" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    m.id, m.uid, m.msg_type, m.title, m.create_time, m.relate_id, m.status
+  </sql>
+  <sql id="Blob_Column_List" >
+    m.content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    , u.uname as username
+    from td_user_message as m
+    left join td_user u on u.uid=m.uid
+    where m.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_user_message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.custom.entity.TdUserMessage" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_user_message (uid, msg_type, title, 
+      create_time, relate_id, status, 
+      content)
+    values (#{uid,jdbcType=INTEGER}, #{msgType,jdbcType=TINYINT}, #{title,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{relateId,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.custom.entity.TdUserMessage" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_user_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="msgType != null" >
+        msg_type,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="relateId != null" >
+        relate_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="msgType != null" >
+        #{msgType,jdbcType=TINYINT},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="relateId != null" >
+        #{relateId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.custom.entity.TdUserMessage" >
+    update td_user_message
+    <set >
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="msgType != null" >
+        msg_type = #{msgType,jdbcType=TINYINT},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="relateId != null" >
+        relate_id = #{relateId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.tiandu.custom.entity.TdUserMessage" >
+    update td_user_message
+    set uid = #{uid,jdbcType=INTEGER},
+      msg_type = #{msgType,jdbcType=TINYINT},
+      title = #{title,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      relate_id = #{relateId,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.custom.entity.TdUserMessage" >
+    update td_user_message
+    set uid = #{uid,jdbcType=INTEGER},
+      msg_type = #{msgType,jdbcType=TINYINT},
+      title = #{title,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      relate_id = #{relateId,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.custom.search.TdUserMessageSearchCriteria" >
+    select count(m.id)
+    from td_user_message as m
+    <if test="isAssociationTdUser">
+        left join td_user u on u.uid= m.uid
+    </if>
+    where 1=1 
+    <if test="id != null" >
+        and m.id=#{id,jdbcType=INTEGER}
+    </if>
+    <if test="username != null" >
+        and u.uname like CONCAT('%',#{username,jdbcType=VARCHAR},'%' )
+    </if>
+    <if test="msgType != null" >
+        and m.msg_type=#{msgType,jdbcType=TINYINT}
+    </if>
+    <if test="status != null" >
+        and m.status=#{status,jdbcType=TINYINT}
+    </if>
+    <if test="title != null" >
+        and m.title like CONCAT('%',#{title,jdbcType=VARCHAR},'%' )
+    </if>
+    <if test="beginDate != null" >
+        and m.create_time <![CDATA[>=]]> #{beginDate,jdbcType=DATE}
+    </if>
+    <if test="endDate != null" >
+        and m.create_time <![CDATA[<=]]> #{endDate,jdbcType=DATE}
+    </if>
+  </select>
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.custom.search.TdUserMessageSearchCriteria" >
+    select 
+    <include refid="Base_Column_List" />
+    <if test="isAssociationTdUser">
+        , u.uname as username
+    </if>
+    from td_user_message as m
+    <if test="isAssociationTdUser">
+        left join td_user u on u.uid= m.uid
+    </if>
+    where 1=1 
+    <if test="id != null" >
+        and m.id=#{id,jdbcType=INTEGER}
+    </if>
+    <if test="username != null" >
+        and u.uname like CONCAT('%',#{username,jdbcType=VARCHAR},'%' )
+    </if>
+    <if test="msgType != null" >
+        and m.msg_type=#{msgType,jdbcType=TINYINT}
+    </if>
+    <if test="status != null" >
+        and m.status=#{status,jdbcType=TINYINT}
+    </if>
+    <if test="title != null" >
+        and m.title like CONCAT('%',#{title,jdbcType=VARCHAR},'%' )
+    </if>
+    
+    <if test="beginDate != null" >
+        and m.create_time <![CDATA[>=]]> #{beginDate,jdbcType=DATE}
+    </if>
+    <if test="endDate != null" >
+        and m.create_time <![CDATA[<=]]> #{endDate,jdbcType=DATE}
+    </if>
+    
+  </select>
+</mapper>

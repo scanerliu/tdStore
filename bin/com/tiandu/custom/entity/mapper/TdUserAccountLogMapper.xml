@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.custom.entity.mapper.TdUserAccountLogMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.custom.entity.TdUserAccountLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="preamount" property="preamount" jdbcType="DECIMAL" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="upamount" property="upamount" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="relation" property="relation" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, uid, preamount, type, upamount, create_time, note, relation
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_user_account_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.custom.search.TdUserAccountLogSearchCriteria" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_user_account_log
+    where 1=1 
+    <if test="uid != null" >
+        and uid=#{uid,jdbcType=INTEGER}
+    </if>
+    order by create_time desc
+  </select>
+  
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.custom.search.TdUserAccountLogSearchCriteria" >
+    select count(id)
+    from td_user_account_log
+    where 1=1 
+    <if test="uid != null" >
+        and uid=#{uid,jdbcType=INTEGER}
+    </if>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_user_account_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.custom.entity.TdUserAccountLog" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_user_account_log (uid, preamount, type, 
+      upamount, create_time, note, 
+      relation)
+    values (#{uid,jdbcType=INTEGER}, #{preamount,jdbcType=DECIMAL}, #{type,jdbcType=TINYINT}, 
+      #{upamount,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{note,jdbcType=VARCHAR}, 
+      #{relation,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.custom.entity.TdUserAccountLog" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_user_account_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="preamount != null" >
+        preamount,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="upamount != null" >
+        upamount,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="note != null" >
+        note,
+      </if>
+      <if test="relation != null" >
+        relation,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="preamount != null" >
+        #{preamount,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="upamount != null" >
+        #{upamount,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="relation != null" >
+        #{relation,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.custom.entity.TdUserAccountLog" >
+    update td_user_account_log
+    <set >
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="preamount != null" >
+        preamount = #{preamount,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="upamount != null" >
+        upamount = #{upamount,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="note != null" >
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="relation != null" >
+        relation = #{relation,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.custom.entity.TdUserAccountLog" >
+    update td_user_account_log
+    set uid = #{uid,jdbcType=INTEGER},
+      preamount = #{preamount,jdbcType=DECIMAL},
+      type = #{type,jdbcType=TINYINT},
+      upamount = #{upamount,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      note = #{note,jdbcType=VARCHAR},
+      relation = #{relation,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -17,6 +17,7 @@ public class TdOrderSearchCriteria extends SearchCriteria {
     private Integer uid; //用户id
     private Boolean getProductSku = false; //获取订单货品集合
     private Integer fliterType; //查询分类0-全部订单，1-待付款，2-代发货，3-待收货，4-待评价
+    private Integer supplierId; // 供应商ID
     
 	public String getOrderNo() {
 		return orderNo;
@@ -88,6 +89,14 @@ public class TdOrderSearchCriteria extends SearchCriteria {
 
 	public void setFliterType(Integer fliterType) {
 		this.fliterType = fliterType;
+	}
+
+	public Integer getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(Integer supplierId) {
+		this.supplierId = supplierId;
 	}
     
     

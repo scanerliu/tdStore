@@ -64,7 +64,7 @@
   	<#if !currentUser.utel??>
 	    <article class="tips">提示：PC上登陆请绑定手机号码</article>
   	</#if>
-  	<a class="a_go" href="../quanguodandai/商家发货列表.html" title="">
+  	<a class="a_go" href="${app.basePath}/mobile/supply/order" title="去发货">
         <label>去发货</label>
         <i class="icon-next"></i>
     </a>
@@ -156,7 +156,7 @@
         <label>供应商资质认证</label>
         <i class="icon-next"></i>
       </a>
-      <a href="../附近门店列表页.html" title="">
+      <a href="${app.basePath}/mobile/experience/list" title="附近门店">
         <i class="icon bg_icon_13"></i>
         <label>附近门店</label>
         <i class="icon-next"></i>

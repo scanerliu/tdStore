@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.order.entity.mapper.TdOrderSkuMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.order.entity.TdOrderSku" >
+    <id column="order_sku_id" property="orderSkuId" jdbcType="INTEGER" />
+    <result column="order_id" property="orderId" jdbcType="INTEGER" />
+    <result column="product_id" property="productId" jdbcType="INTEGER" />
+    <result column="product_sku_id" property="productSkuId" jdbcType="INTEGER" />
+    <result column="item_type" property="itemType" jdbcType="TINYINT" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="product_sku_code" property="productSkuCode" jdbcType="VARCHAR" />
+    <result column="display_specifications" property="displaySpecifications" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="supplier_price" property="supplierPrice" jdbcType="DECIMAL" />
+    <result column="back_quantity" property="backQuantity" jdbcType="INTEGER" />
+    <result column="product_image" property="productImage" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    order_sku_id, order_id, product_id, product_sku_id, item_type, product_name, product_sku_code, 
+    display_specifications, quantity, price,supplier_price, back_quantity,product_image
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_order_sku
+    where order_sku_id = #{orderSkuId,jdbcType=INTEGER}
+  </select>
+  <select id="findByOrderId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_order_sku
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_order_sku
+    where order_sku_id = #{orderSkuId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.order.entity.TdOrderSku" >
+    <selectKey resultType="java.lang.Integer" keyProperty="orderSkuId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_order_sku (order_id, product_id, product_sku_id, 
+      item_type, product_name, product_sku_code, 
+      display_specifications, quantity, price, supplier_price,
+      back_quantity,product_image)
+    values (#{orderId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, #{productSkuId,jdbcType=INTEGER}, 
+      #{itemType,jdbcType=TINYINT}, #{productName,jdbcType=VARCHAR}, #{productSkuCode,jdbcType=VARCHAR}, 
+      #{displaySpecifications,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, #{supplierPrice,jdbcType=DECIMAL}, 
+      #{backQuantity,jdbcType=INTEGER}, #{productImage,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.order.entity.TdOrderSku" >
+    <selectKey resultType="java.lang.Integer" keyProperty="orderSkuId" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_order_sku
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        order_id,
+      </if>
+      <if test="productId != null" >
+        product_id,
+      </if>
+      <if test="productSkuId != null" >
+        product_sku_id,
+      </if>
+      <if test="itemType != null" >
+        item_type,
+      </if>
+      <if test="productName != null" >
+        product_name,
+      </if>
+      <if test="productSkuCode != null" >
+        product_sku_code,
+      </if>
+      <if test="displaySpecifications != null" >
+        display_specifications,
+      </if>
+      <if test="quantity != null" >
+        quantity,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="supplierPrice != null" >
+        supplier_price,
+      </if>
+      <if test="backQuantity != null" >
+        back_quantity,
+      </if>
+      <if test="productImage != null" >
+        product_mage,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null" >
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="productSkuId != null" >
+        #{productSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=TINYINT},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="productSkuCode != null" >
+        #{productSkuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="displaySpecifications != null" >
+        #{displaySpecifications,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="supplierPrice != null" >
+        #{supplierPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="backQuantity != null" >
+        #{backQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="productImage != null" >
+        #{productImage,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.order.entity.TdOrderSku" >
+    update td_order_sku
+    <set >
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null" >
+        product_id = #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="productSkuId != null" >
+        product_sku_id = #{productSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="itemType != null" >
+        item_type = #{itemType,jdbcType=TINYINT},
+      </if>
+      <if test="productName != null" >
+        product_name = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="productSkuCode != null" >
+        product_sku_code = #{productSkuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="displaySpecifications != null" >
+        display_specifications = #{displaySpecifications,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="supplierPrice != null" >
+        supplier_price = #{supplierPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="backQuantity != null" >
+        back_quantity = #{backQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="productImage != null" >
+          product_image = #{productImage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where order_sku_id = #{orderSkuId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.order.entity.TdOrderSku" >
+    update td_order_sku
+    set order_id = #{orderId,jdbcType=INTEGER},
+      product_id = #{productId,jdbcType=INTEGER},
+      product_sku_id = #{productSkuId,jdbcType=INTEGER},
+      item_type = #{itemType,jdbcType=TINYINT},
+      product_name = #{productName,jdbcType=VARCHAR},
+      product_sku_code = #{productSkuCode,jdbcType=VARCHAR},
+      display_specifications = #{displaySpecifications,jdbcType=VARCHAR},
+      quantity = #{quantity,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      supplier_price = #{supplierPrice,jdbcType=DECIMAL},
+      back_quantity = #{backQuantity,jdbcType=INTEGER},
+      product_image = #{productImage,jdbcType=VARCHAR}
+    where order_sku_id = #{orderSkuId,jdbcType=INTEGER}
+  </update>
+</mapper>

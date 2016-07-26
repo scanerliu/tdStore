@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.custom.entity.mapper.TdBrancheCompanyMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.custom.entity.TdBrancheCompany" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="region_id" property="regionId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+     <!-- 用户信息 -->
+	<association property="user" resultMap="userResult"/>
+	<!-- 审核人信息 -->
+	<association property="updatePerson" resultMap="updatePersonResult"/>
+	<!-- 地区信息 -->
+	<association property="district" resultMap="districtResult"/>
+  </resultMap>
+  <resultMap id="userResult" type="com.tiandu.custom.entity.TdUser" >
+  	<result column="username" property="uname" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="updatePersonResult" type="com.tiandu.custom.entity.TdUser" >
+  	<result column="updatename" property="uname" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="districtResult" type="com.tiandu.district.entity.TdDistrict" >
+  	<result column="districtname" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    b.id, b.uid, b.level, b.region_id, b.status, b.update_time, b.update_by
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_branche_company as b
+    where b.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_branche_company
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.custom.entity.TdBrancheCompany" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_branche_company (uid, level, region_id, 
+      status, update_time, update_by
+      )
+    values (#{uid,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{regionId,jdbcType=INTEGER}, 
+      #{status,jdbcType=TINYINT}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.custom.entity.TdBrancheCompany" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_branche_company
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="regionId != null" >
+        region_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="regionId != null" >
+        #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.custom.entity.TdBrancheCompany" >
+    update td_branche_company
+    <set >
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="regionId != null" >
+        region_id = #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.custom.entity.TdBrancheCompany" >
+    update td_branche_company
+    set uid = #{uid,jdbcType=INTEGER},
+      level = #{level,jdbcType=INTEGER},
+      region_id = #{regionId,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.custom.search.TdBrancheCompanySearchCriteria" >
+    select count(b.id)
+    from td_branche_company as b
+    <if test="isAssociationUser">
+        left join td_user u on u.uid= b.uid
+    </if>
+    <if test="isAssociationUpdatePerson" >
+        left join td_user c on c.uid= b.update_by
+    </if>
+    <if test="isAssociationDistrict" >
+        left join td_district d on d.id= b.region_id
+    </if>
+    where 1=1 
+    <if test="id != null" >
+        and b.id=#{id,jdbcType=INTEGER}
+    </if>
+    <if test="level != null" >
+        and b.level=#{level,jdbcType=TINYINT}
+    </if>
+    <if test="status != null" >
+        and b.status=#{status,jdbcType=TINYINT}
+    </if>
+    <if test="searchName != null">
+        and u.uname like CONCAT('%','${searchName}','%' )
+    </if>
+    <if test="districtName != null">
+        and d.name like CONCAT('%','${districtName}','%' )
+    </if>
+  </select>
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.custom.search.TdBrancheCompanySearchCriteria" >
+    select 
+    <include refid="Base_Column_List" />
+    <if test="isAssociationUser">
+        , u.uname as username
+    </if>
+    <if test="isAssociationUpdatePerson" >
+        , c.uname as updatename
+    </if>
+    <if test="isAssociationDistrict" >
+        , d.name as districtname
+    </if>
+    from td_branche_company as b
+    <if test="isAssociationUser">
+        left join td_user u on u.uid= b.uid
+    </if>
+    <if test="isAssociationUpdatePerson" >
+        left join td_user c on c.uid= b.update_by
+    </if>
+    <if test="isAssociationDistrict" >
+        left join td_district d on d.id= b.region_id
+    </if>
+    where 1=1 
+    <if test="id != null" >
+        and b.id=#{id,jdbcType=INTEGER}
+    </if>
+    <if test="level != null" >
+        and b.level=#{level,jdbcType=TINYINT}
+    </if>
+    <if test="status != null" >
+        and b.status=#{status,jdbcType=TINYINT}
+    </if>
+    <if test="searchName != null">
+        and u.uname like CONCAT('%','${searchName}','%' )
+    </if>
+    <if test="districtName != null">
+        and d.name like CONCAT('%','${districtName}','%' )
+    </if>
+  </select>
+</mapper>

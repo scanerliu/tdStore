@@ -577,15 +577,17 @@ function flushTable(){
 	console.log("result:" + result);
 	// 原表中的trIds
 	var tableTrIdsArray = preparedStrIdsArray("skuAssemble", result);
+	console.log("tableTrIdsArray:");
+	console.log(tableTrIdsArray);
 	// 根据result产生新的tableTr
 	var newTableStr = "";
 	for(var i = 0; i < result.length; i ++){
-		var r = result[i];
+		var r = result[i].toString();
 		var isExist = 0;
 		for(var j = 0; j < tableTrIdsArray.length; j ++){
-			if(tableTrIdsArray[j] == r){
+			if(tableTrIdsArray[j].toString() == r){
 				// 原表中存在该tr
-				var originalStr = $("#" + r).html();
+				var originalStr = $("[id='" + r + "']").html();
 				newTableStr = newTableStr + "<tr id="+ r +">" + originalStr + "</tr>";
 				isExist = 1;
 				break;

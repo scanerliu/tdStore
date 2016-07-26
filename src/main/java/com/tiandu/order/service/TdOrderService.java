@@ -71,4 +71,26 @@ public interface TdOrderService {
 	 * @return
 	 */
 	public OperResult complaintOrder(TdOrder order, TdComplaint complaint);
+<<<<<<< HEAD
+	/**
+	 * 收货
+	 * @param order
+	 * @param user
+	 * @return
+	 */
+	public OperResult receiptOrder(TdOrder order, TdUser user);
+	/**
+	 * 订单支付
+	 * @param order
+	 * @param orderPay
+	 * @return
+	 */
+	public OperResult payOrder(TdOrder order, OrderPay orderPay);
+	
+	/**
+	 * 订单分润
+	 * @param order
+	 * @return
+	 */
+	public void benefitOrder(TdOrder order) throws RuntimeException;
 }

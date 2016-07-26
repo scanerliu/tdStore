@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.product.entity.mapper.TdProductAttachmentMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.product.entity.TdProductAttachment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="attachment" property="attachment" jdbcType="VARCHAR" />
+    <result column="filename" property="filename" jdbcType="VARCHAR" />
+    <result column="product_id" property="productId" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, attachment, filename, product_id, sort
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_product_attachment
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_product_attachment
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.product.entity.TdProductAttachment" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_product_attachment (attachment, filename, product_id, 
+      sort)
+    values (#{attachment,jdbcType=VARCHAR}, #{filename,jdbcType=VARCHAR}, #{productId,jdbcType=INTEGER}, 
+      #{sort,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.product.entity.TdProductAttachment" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_product_attachment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="attachment != null" >
+        attachment,
+      </if>
+      <if test="filename != null" >
+        filename,
+      </if>
+      <if test="productId != null" >
+        product_id,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="attachment != null" >
+        #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="filename != null" >
+        #{filename,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null" >
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.product.entity.TdProductAttachment" >
+    update td_product_attachment
+    <set >
+      <if test="attachment != null" >
+        attachment = #{attachment,jdbcType=VARCHAR},
+      </if>
+      <if test="filename != null" >
+        filename = #{filename,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null" >
+        product_id = #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.product.entity.TdProductAttachment" >
+    update td_product_attachment
+    set attachment = #{attachment,jdbcType=VARCHAR},
+      filename = #{filename,jdbcType=VARCHAR},
+      product_id = #{productId,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="findByProductId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_product_attachment
+    where product_id = #{productId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByProductId" parameterType="java.lang.Integer" >
+    delete from td_product_attachment
+    where product_id = #{productId,jdbcType=INTEGER}
+  </delete>
+</mapper>

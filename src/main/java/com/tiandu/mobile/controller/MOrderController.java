@@ -74,6 +74,13 @@ public class MOrderController extends BaseController {
 		return "/mobile/order/listbody";
 	}
 	
+	
+	@RequestMapping("/refundlist")
+	public String refundlist(TdOrderShipmentSearchCriteria sc, HttpServletRequest request, HttpServletResponse response, ModelMap modelMap) {
+		modelMap.addAttribute("sc", sc) ;
+	    return "/mobile/order/refundlist";
+	}
+	
 	@RequestMapping("/searchreturn")
 	public String searchreturn(TdOrderShipmentSearchCriteria sc, HttpServletRequest request, HttpServletResponse response, ModelMap modelMap) {
 		TdUser currUser = this.getCurrentUser();
@@ -165,7 +172,7 @@ public class MOrderController extends BaseController {
 		if(null!=ship.getId() && ship.getId()>0){
 			shipment = tdOrderShipmentService.findOne(ship.getId());
 		}
-		if(null==shipment && null!= shipment.getOrderId()){
+		if(null==shipment || null== shipment.getOrderId()){
 			map.put("code", "0");
 			map.put("msg", "录入物流单号失败：退款申请不存在！");
 			return map;
@@ -216,6 +223,34 @@ public class MOrderController extends BaseController {
 		OperResult result = tdOrderService.complaintOrder(order, complaint);
 		modelMap.addAttribute("result", result) ;
 		return "/mobile/order/complaint";
+	}
+	
+	/**
+	 * 确认收货操作
+	 * @param ship
+	 * @param request
+	 * @param response
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping("/receiptorder")
+	@ResponseBody
+	public Map<String,String> receiptOrder(Integer orderId, HttpServletRequest request, HttpServletResponse response, ModelMap modelMap) {
+		Map<String, String> map = new HashMap<String, String>();
+		TdUser currUser = this.getCurrentUser();
+		TdOrder order = null;
+		if(null!=orderId && orderId>0){
+			order = tdOrderService.findOne(orderId);
+		}
+		if(null==order || null== order.getOrderId() || order.getUserId()!=currUser.getUid()){
+			map.put("code", "0");
+			map.put("msg", "确认收货操作失败：订单申请不存在！");
+			return map;
+		}
+		tdOrderService.receiptOrder(order, currUser);
+		map.put("code", "1");
+		map.put("msg", "确认收货操作成功。");
+		return map;
 	}
 	
 }

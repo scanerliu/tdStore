@@ -42,11 +42,6 @@ public class TdOrderShipment {
      * 发货，退货清单
      */
     private List<TdOrderShipmentItem> itemList;
-    
-    /**
-     * 订单信息（查询退货订单时使用）
-     */
-    private TdOrder order;
 
     public Integer getId() {
         return id;
@@ -182,14 +177,6 @@ public class TdOrderShipment {
 
 	public void setTrackExpress(TdExpress trackExpress) {
 		this.trackExpress = trackExpress;
-	}
-
-	public TdOrder getOrder() {
-		return order;
-	}
-
-	public void setOrder(TdOrder order) {
-		this.order = order;
 	}
 
 	public List<TdOrderShipmentItem> getItemList() {

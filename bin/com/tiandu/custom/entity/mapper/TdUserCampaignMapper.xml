@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.custom.entity.mapper.TdUserCampaignMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.custom.entity.TdUserCampaign" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="region_id" property="regionId" jdbcType="INTEGER" />
+    <result column="uavatar" property="uavatar" jdbcType="VARCHAR" />
+    <result column="uname" property="uname" jdbcType="VARCHAR" />
+    <result column="declaration" property="declaration" jdbcType="VARCHAR" />
+    <result column="agent_count" property="agentCount" jdbcType="INTEGER" />
+    <result column="enterprise_count" property="enterpriseCount" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    
+    <!-- 用户 -->
+    <association property="compaignUser" resultMap="compaignUserResult"/>
+    
+    <!-- 地区 -->
+    <association property="district" resultMap="districtResult"/>
+    
+  </resultMap>
+  
+  <resultMap id="compaignUserResult" type="com.tiandu.custom.entity.TdUser" >
+  	<result column="u_uname" property="uname" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="districtResult" type="com.tiandu.district.entity.TdDistrict" >
+  	<result column="d_name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ResultMapWithBLOBs" type="com.tiandu.custom.entity.TdUserCampaign" extends="BaseResultMap" >
+    <result column="resume" property="resume" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    c.id, c.uid, c.cid, c.level, c.region_id, c.uavatar, c.uname, c.declaration, c.agent_count, c.enterprise_count, 
+    c.create_time, c.status, c.resume
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+   	,u.uname as u_uname
+  	,d.name as d_name
+
+    from td_user_campaign c
+    	left join td_user u on u.uid= c.uid
+    	left join td_district d on d.id= c.region_id
+    where c.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_user_campaign
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.custom.entity.TdUserCampaign" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_user_campaign (uid, cid, level, 
+      region_id, uavatar, uname, 
+      declaration, agent_count, enterprise_count, 
+      create_time, status, resume
+      )
+    values (#{uid,jdbcType=INTEGER}, #{cid,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, 
+      #{regionId,jdbcType=INTEGER}, #{uavatar,jdbcType=VARCHAR}, #{uname,jdbcType=VARCHAR}, 
+      #{declaration,jdbcType=VARCHAR}, #{agentCount,jdbcType=INTEGER}, #{enterpriseCount,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, #{resume,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.custom.entity.TdUserCampaign" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_user_campaign
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="cid != null" >
+        cid,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="regionId != null" >
+        region_id,
+      </if>
+      <if test="uavatar != null" >
+        uavatar,
+      </if>
+      <if test="uname != null" >
+        uname,
+      </if>
+      <if test="declaration != null" >
+        declaration,
+      </if>
+      <if test="agentCount != null" >
+        agent_count,
+      </if>
+      <if test="enterpriseCount != null" >
+        enterprise_count,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="resume != null" >
+        resume,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="cid != null" >
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="regionId != null" >
+        #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="uavatar != null" >
+        #{uavatar,jdbcType=VARCHAR},
+      </if>
+      <if test="uname != null" >
+        #{uname,jdbcType=VARCHAR},
+      </if>
+      <if test="declaration != null" >
+        #{declaration,jdbcType=VARCHAR},
+      </if>
+      <if test="agentCount != null" >
+        #{agentCount,jdbcType=INTEGER},
+      </if>
+      <if test="enterpriseCount != null" >
+        #{enterpriseCount,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="resume != null" >
+        #{resume,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.custom.entity.TdUserCampaign" >
+    update td_user_campaign
+    <set >
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="cid != null" >
+        cid = #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="regionId != null" >
+        region_id = #{regionId,jdbcType=INTEGER},
+      </if>
+      <if test="uavatar != null" >
+        uavatar = #{uavatar,jdbcType=VARCHAR},
+      </if>
+      <if test="uname != null" >
+        uname = #{uname,jdbcType=VARCHAR},
+      </if>
+      <if test="declaration != null" >
+        declaration = #{declaration,jdbcType=VARCHAR},
+      </if>
+      <if test="agentCount != null" >
+        agent_count = #{agentCount,jdbcType=INTEGER},
+      </if>
+      <if test="enterpriseCount != null" >
+        enterprise_count = #{enterpriseCount,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="resume != null" >
+        resume = #{resume,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.tiandu.custom.entity.TdUserCampaign" >
+    update td_user_campaign
+    set uid = #{uid,jdbcType=INTEGER},
+      cid = #{cid,jdbcType=INTEGER},
+      level = #{level,jdbcType=INTEGER},
+      region_id = #{regionId,jdbcType=INTEGER},
+      uavatar = #{uavatar,jdbcType=VARCHAR},
+      uname = #{uname,jdbcType=VARCHAR},
+      declaration = #{declaration,jdbcType=VARCHAR},
+      agent_count = #{agentCount,jdbcType=INTEGER},
+      enterprise_count = #{enterpriseCount,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT},
+      resume = #{resume,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.custom.entity.TdUserCampaign" >
+    update td_user_campaign
+    set uid = #{uid,jdbcType=INTEGER},
+      cid = #{cid,jdbcType=INTEGER},
+      level = #{level,jdbcType=INTEGER},
+      region_id = #{regionId,jdbcType=INTEGER},
+      uavatar = #{uavatar,jdbcType=VARCHAR},
+      uname = #{uname,jdbcType=VARCHAR},
+      declaration = #{declaration,jdbcType=VARCHAR},
+      agent_count = #{agentCount,jdbcType=INTEGER},
+      enterprise_count = #{enterpriseCount,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.custom.search.TdUserCampaignCriteria">
+  	select count(id)
+    from td_user_campaign
+    where 1=1 
+    <if test="regionId != null">
+        and region_id=#{regionId,jdbcType=INTEGER}
+    </if>
+    <if test="uid != null">
+        and uid=#{uid,jdbcType=INTEGER}
+    </if>
+    <if test="orderBy != null" >
+      	<if test="orderBy ==1">
+      		order by  level desc
+      	</if>
+      	<if  test="orderBy ==2">
+	      	order by level asc
+      	</if>
+     </if>
+  </select>
+  
+  <select id="findBySearchCriteria" resultMap="ResultMapWithBLOBs" parameterType="com.tiandu.custom.search.TdUserCampaignCriteria">
+  	select 
+  	<include refid="Base_Column_List" />
+  	,u.uname as u_uname
+  	,d.name as d_name
+    from td_user_campaign c
+    	left join td_user u on u.uid= c.uid
+    	left join td_district d on d.id= c.region_id
+    where 1=1
+    <if test="regionId != null">
+        and c.region_id=#{regionId,jdbcType=INTEGER}
+    </if>
+    <if test="uid != null">
+        and c.uid=#{uid,jdbcType=INTEGER}
+    </if>
+    <if test="orderBy != null" >
+      	<if test="orderBy ==1">
+      		order by  level desc
+      	</if>
+      	<if  test="orderBy ==2">
+	      	order by level asc
+      	</if>
+     </if>
+  </select>
+  
+  
+  
+</mapper>

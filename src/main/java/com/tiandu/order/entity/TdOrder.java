@@ -57,6 +57,7 @@ public class TdOrder extends TdBaseEntity{
     private Integer gainPoints;
     
     private Boolean  commented;
+    private Boolean  benefited;
     /**
      * 购买人信息
      */
@@ -273,6 +274,14 @@ public class TdOrder extends TdBaseEntity{
 		this.commented = commented;
 	}
 
+	public Boolean getBenefited() {
+		return benefited;
+	}
+
+	public void setBenefited(Boolean benefited) {
+		this.benefited = benefited;
+	}
+
 	public TdUser getOrderUser() {
 		return orderUser;
 	}
@@ -313,6 +322,16 @@ public class TdOrder extends TdBaseEntity{
 		this.productList = productList;
 	}
 
+	/**
+	 * 获取订单未支付金额
+	 * @return
+	 */
+	public BigDecimal getUnPayAmount(){
+		if(null!=this.getTotalAmount()&&null!=this.getPointAmount()&&null!=this.getPayAmount()){
+			return this.getTotalAmount().subtract(this.getPayAmount()).subtract(this.getPointAmount());
+		}
+		return BigDecimal.ZERO;
+	}
 	/**
      * 获取订单状态文字说明
      * @return

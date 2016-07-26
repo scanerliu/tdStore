@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.product.entity.mapper.TdProductAttributeMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.product.entity.TdProductAttribute" >
+    <id column="attri_id" property="attriId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    attri_id, name, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_product_attribute
+    where attri_id = #{attriId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_product_attribute
+    where attri_id = #{attriId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.product.entity.TdProductAttribute" >
+    insert into td_product_attribute (attri_id, name, status
+      )
+    values (#{attriId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.product.entity.TdProductAttribute" >
+    insert into td_product_attribute
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="attriId != null" >
+        attri_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="attriId != null" >
+        #{attriId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.product.entity.TdProductAttribute" >
+    update td_product_attribute
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where attri_id = #{attriId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.product.entity.TdProductAttribute" >
+    update td_product_attribute
+    set name = #{name,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT}
+    where attri_id = #{attriId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="countByCriteria" resultType="java.lang.Integer" parameterType="com.tiandu.product.search.TdProductAttributeCriteria">
+  	select count(attri_id)
+    from td_product_attribute
+    where 1=1
+    <if test="status != null" >
+       and  status = #{status,jdbcType=TINYINT}
+      </if> 
+  </select>
+  
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.product.search.TdProductAttributeCriteria">
+  	select 
+  	<include refid="Base_Column_List" />
+    from td_product_attribute 
+    where 1=1 
+    <if test="status != null" >
+       and  status = #{status,jdbcType=TINYINT}
+      </if>
+  </select>
+  
+  
+</mapper>

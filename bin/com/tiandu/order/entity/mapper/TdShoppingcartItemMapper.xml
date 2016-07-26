@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.order.entity.mapper.TdShoppingcartItemMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.order.entity.TdShoppingcartItem" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="product_id" property="productId" jdbcType="INTEGER" />
+    <result column="product_sku_id" property="productSkuId" jdbcType="INTEGER" />
+    <result column="item_type" property="itemType" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="postage" property="postage" jdbcType="DECIMAL" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <!-- 商品信息 -->
+	<association property="product" resultMap="productResult"/>
+    <!-- 货品信息 -->
+	<association property="productSku" resultMap="productSkuResult"/>
+  </resultMap>
+  
+  <resultMap id="productResult" type="com.tiandu.product.entity.TdProduct" >
+  	<result column="p_name" property="name" jdbcType="VARCHAR" />
+  	<result column="p_kind" property="kind" jdbcType="VARCHAR" />
+  	<result column="p_uid" property="uid" jdbcType="VARCHAR" />
+  	<result column="p_postage" property="postage" jdbcType="DECIMAL" />
+  	<result column="p_status" property="status" jdbcType="TINYINT" />
+  	<result column="p_onshelf" property="onshelf" jdbcType="BIT" />
+  	<result column="p_image" property="imageUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="productSkuResult" type="com.tiandu.product.entity.TdProductSku" >
+  	<result column="p_specifications" property="specifications" jdbcType="VARCHAR" />
+  	<result column="p_salesPrice" property="salesPrice" jdbcType="DECIMAL" />
+  	<result column="p_stock" property="stock" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    s.id, s.uid, s.product_id, s.product_sku_id, s.item_type, s.price, s.postage, s.quantity
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_shoppingcart_item s
+    where s.id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="findByUid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_shoppingcart_item s
+    where s.uid = #{uid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByUidAndSkuId" resultMap="BaseResultMap" parameterType="com.tiandu.order.entity.TdShoppingcartItem" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_shoppingcart_item s
+    where s.uid = #{uid,jdbcType=INTEGER} and s.product_sku_id = #{productSkuId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.order.search.TdShoppingcartSearchCriteria" >
+    select 
+    <include refid="Base_Column_List" />
+    ,p.kind as p_kind, p.uid as p_uid, p.name as p_name, p.postage as p_postage, p.image_url as p_image, p.status as p_status, p.onshelf as p_onshelf
+    , k.specifications as p_specifications, k.sales_price as p_salesPrice, k.stock as p_stock
+    from td_shoppingcart_item s left join td_product p on s.product_id = p.id left join td_product_sku k on s.product_sku_id = k.id
+    where 1=1 
+    <if test="uid != null" >
+        and s.uid=#{uid,jdbcType=INTEGER}
+    </if>
+    <if test="itemType != null" >
+        and s.item_type=#{itemType,jdbcType=INTEGER}
+    </if>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_shoppingcart_item
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.order.entity.TdShoppingcartItem" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_shoppingcart_item (uid, product_id, product_sku_id, item_type,
+      price, postage, quantity)
+    values (#{uid,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER}, #{productSkuId,jdbcType=INTEGER},  #{itemType,jdbcType=INTEGER}, 
+      #{price,jdbcType=DECIMAL}, #{postage,jdbcType=DECIMAL}, #{quantity,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.order.entity.TdShoppingcartItem" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_shoppingcart_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="productId != null" >
+        product_id,
+      </if>
+      <if test="productSkuId != null" >
+        product_sku_id,
+      </if>
+      <if test="itemType != null" >
+        item_type,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="postage != null" >
+        postage,
+      </if>
+      <if test="quantity != null" >
+        quantity,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null" >
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=INTEGER},
+      </if>
+      <if test="productSkuId != null" >
+        #{productSkuId,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="postage != null" >
+        #{postage,jdbcType=DECIMAL},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.order.entity.TdShoppingcartItem" >
+    update td_shoppingcart_item
+    <set >
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="postage != null" >
+        price = #{postage,jdbcType=DECIMAL},
+      </if>
+      <if test="quantity != null" >
+        quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.order.entity.TdShoppingcartItem" >
+    update td_shoppingcart_item
+    set uid = #{uid,jdbcType=INTEGER},
+      product_id = #{productId,jdbcType=INTEGER},
+      product_sku_id = #{productSkuId,jdbcType=INTEGER},
+      item_type = #{itemType,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      postage = #{postage,jdbcType=DECIMAL},
+      quantity = #{quantity,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateNumByPrimaryKey" parameterType="com.tiandu.order.entity.TdShoppingcartItem" >
+    update td_shoppingcart_item
+     <set >
+     <choose>
+      <when test="optype != null and optype==1" >
+        quantity = quantity+1,
+      </when>
+      <otherwise>
+      	quantity = quantity-1,
+      </otherwise>
+      </choose>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="deleteByUid" parameterType="java.lang.Integer" >
+    delete from td_shoppingcart_item
+    where uid = #{uid,jdbcType=INTEGER}
+  </delete>
+</mapper>

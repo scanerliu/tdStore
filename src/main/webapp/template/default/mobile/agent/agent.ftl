@@ -63,7 +63,6 @@ $(document).ready(function(){
         </#if>
         <section class="sec5"><input type="checkbox" checked="checked" id="isCheck">我已阅读并同意<a href="${app.basePath}/mobile/agent/article" title="《创客联盟代理条款》">《创客联盟代理条款》</a></section>
         <section class="sec6"><a href="${app.basePath}/mobile/agent/dopay?id=${agent.id?c}" title="立即加入" id="sub_btn">立即加入</a></section>
-        
     </div>
 </section>
 <!-- Center end -->
