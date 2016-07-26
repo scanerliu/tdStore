@@ -21,13 +21,17 @@ function changeProductSku(skus){
 	if(!selected){
 		return;
 	}
+	var idkeys = idkey.split("_");
+	idkeys.sort();
 	var skuList = skus.skuList;
 	var exist = false;
 	var price = 0;
 	var stock = 0;
 	var skuId = 0;
 	$.each(skuList,function(i,o){
-		if(o.specificationids==idkey){
+		var specifica = o.specificationids.split("_");
+		specifica.sort();
+		if(specifica.toString()==idkeys.toString()){
 			exist = true;
 			price = o.salesPrice;
 			stock = o.stock;

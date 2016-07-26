@@ -394,7 +394,7 @@ public class CustomerController extends BaseController {
 		    	}
 		    	account.setUpdateBy(currManager.getUid());
 		    	account.setUpdateTime(now);
-		    	accountlog.setType(TdUserIntegralLog.USERINTEGRALLOG_TYPE_SYSTEM);
+		    	accountlog.setType(TdUserAccountLog.USERACCOUNTLOG_TYPE_SYSTEM);
 		    	accountlog.setCreateTime(now);
 		    	tdUserAccountService.addAmount(account, accountlog);
 				res.put("code", "1");
