@@ -35,12 +35,11 @@
 	</form>
     <!-- top-nav -->
     <ul class="top-nav">
-      <li class="active"><a href="javascript:;" title="">全部</a></li>
+      <li class="active"><a href="javascript:;" title="">全部订单</a></li>
       <li><a href="javascript:;" title="">待付款</a></li>
       <li><a href="javascript:;" title="">待发货</a></li>
       <li><a href="javascript:;" title="">待收货</a></li>
       <li><a href="javascript:;" title="">待评价</a></li>
-      <li><a href="javascript:;" title="">退款</a></li>
     </ul>
     <ol>
       <li>

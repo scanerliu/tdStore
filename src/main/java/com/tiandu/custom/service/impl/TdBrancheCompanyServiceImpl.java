@@ -62,6 +62,11 @@ public class TdBrancheCompanyServiceImpl implements TdBrancheCompanyService {
 	
 	
 	@Override
+	public int countByCriteria(TdBrancheCompanySearchCriteria sc) {
+		return brancheCompanyMapper.countByCriteria(sc);
+	}
+
+	@Override
 	public Integer save(TdBrancheCompany tdBrancheCompany) {
 		if(null!=tdBrancheCompany){
 			if(null!=tdBrancheCompany.getId()){//更新
@@ -78,4 +83,10 @@ public class TdBrancheCompanyServiceImpl implements TdBrancheCompanyService {
 		return brancheCompanyMapper.deleteByPrimaryKey(id);
 	}
 
+	@Override
+	public TdBrancheCompany findByUid(Integer userId) {
+		return brancheCompanyMapper.findByUid(userId);
+	}
+
+	
 }

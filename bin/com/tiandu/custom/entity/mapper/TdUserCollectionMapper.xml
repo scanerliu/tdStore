@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tiandu.custom.entity.mapper.TdUserCollectionMapper" >
+  <resultMap id="BaseResultMap" type="com.tiandu.custom.entity.TdUserCollection" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="item_type" property="itemType" jdbcType="TINYINT" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    
+    <!-- 商品信息 -->
+	<association property="product" resultMap="productResult"/>
+  </resultMap>
+  
+  <resultMap id="productResult" type="com.tiandu.product.entity.TdProduct" >
+  	<result column="p_name" property="name" jdbcType="VARCHAR" />
+  	<result column="p_img" property="imageUrl" jdbcType="VARCHAR" />
+  	<result column="p_price" property="price" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    c.id, c.uid, c.item_type, c.item_id, c.create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from td_user_collection c
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from td_user_collection
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tiandu.custom.entity.TdUserCollection" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_user_collection (uid, item_type, item_id, 
+      create_time)
+    values (#{uid,jdbcType=INTEGER}, #{itemType,jdbcType=TINYINT}, #{itemId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tiandu.custom.entity.TdUserCollection" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into td_user_collection
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="itemType != null" >
+        item_type,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=TINYINT},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tiandu.custom.entity.TdUserCollection" >
+    update td_user_collection
+    <set >
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="itemType != null" >
+        item_type = #{itemType,jdbcType=TINYINT},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tiandu.custom.entity.TdUserCollection" >
+    update td_user_collection
+    set uid = #{uid,jdbcType=INTEGER},
+      item_type = #{itemType,jdbcType=TINYINT},
+      item_id = #{itemId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="countByCriteria"  resultType="java.lang.Integer" parameterType="com.tiandu.custom.search.TdUserCollectionCriteria" >
+    select count(id)
+    from td_user_collection
+    where 1=1
+    <if test="itemId != null" >
+       and  item_id = #{itemId,jdbcType=INTEGER}
+    </if>
+    <if test="uid != null" >
+       and  uid = #{uid,jdbcType=INTEGER}
+    </if>
+  </select>
+  
+  <select id="findBySearchCriteria" resultMap="BaseResultMap" parameterType="com.tiandu.custom.search.TdUserCollectionCriteria" >
+    select 
+    <include refid="Base_Column_List" />
+    , p.name as p_name ,p.image_url as p_img, p.price as p_price
+    
+    from td_user_collection c
+    
+    left join td_product p on p.id = c.item_id
+    where 1=1
+    <if test="itemId != null" >
+       and  c.item_id = #{itemId,jdbcType=INTEGER}
+    </if>
+    <if test="uid != null" >
+       and  c.uid = #{uid,jdbcType=INTEGER}
+    </if>
+  </select>
+</mapper>

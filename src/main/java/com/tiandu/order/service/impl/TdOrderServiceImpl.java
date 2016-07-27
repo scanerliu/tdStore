@@ -3,24 +3,34 @@ package com.tiandu.order.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.tiandu.common.utils.ConstantsUtils;
 import com.tiandu.common.utils.WebUtils;
 import com.tiandu.complaint.entity.TdComplaint;
 import com.tiandu.complaint.service.TdComplaintService;
+import com.tiandu.custom.entity.TdAgent;
+import com.tiandu.custom.entity.TdBrancheCompany;
 import com.tiandu.custom.entity.TdUser;
+import com.tiandu.custom.entity.TdUserAccount;
+import com.tiandu.custom.entity.TdUserAccountLog;
 import com.tiandu.custom.entity.TdUserAddress;
 import com.tiandu.custom.entity.TdUserIntegral;
 import com.tiandu.custom.entity.TdUserIntegralLog;
+import com.tiandu.custom.search.TdAgentSearchCriteria;
+import com.tiandu.custom.search.TdBrancheCompanySearchCriteria;
+import com.tiandu.custom.service.TdAgentService;
+import com.tiandu.custom.service.TdBrancheCompanyService;
+import com.tiandu.custom.service.TdUserAccountService;
 import com.tiandu.custom.service.TdUserAddressService;
 import com.tiandu.custom.service.TdUserIntegralService;
+import com.tiandu.custom.service.TdUserService;
+import com.tiandu.district.entity.TdDistrict;
+import com.tiandu.district.service.TdDistrictService;
 import com.tiandu.order.entity.TdJointOrder;
 import com.tiandu.order.entity.TdOrder;
 import com.tiandu.order.entity.TdOrderAddress;
@@ -38,13 +48,17 @@ import com.tiandu.order.entity.mapper.TdOrderProductMapper;
 import com.tiandu.order.entity.mapper.TdOrderShipmentItemMapper;
 import com.tiandu.order.entity.mapper.TdOrderShipmentMapper;
 import com.tiandu.order.entity.mapper.TdOrderSkuMapper;
-import com.tiandu.order.entity.mapper.TdShoppingcartItemMapper;
 import com.tiandu.order.search.TdOrderSearchCriteria;
 import com.tiandu.order.service.TdOrderService;
 import com.tiandu.order.vo.OperResult;
 import com.tiandu.order.vo.OrderForm;
 import com.tiandu.order.vo.OrderRefund;
 import com.tiandu.order.vo.ShoppingcartVO;
+import com.tiandu.product.entity.TdAgentProduct;
+import com.tiandu.product.service.TdAgentProductService;
+import com.tiandu.system.entity.TdBenefit;
+import com.tiandu.system.search.TdBenefitSearchCriteria;
+import com.tiandu.system.service.TdBenefitService;
 import com.tiandu.system.utils.ConfigUtil;
 
 /**
@@ -77,9 +91,24 @@ public class TdOrderServiceImpl implements TdOrderService{
 	private TdUserAddressService tdUserAddressService;
 	@Autowired
 	private TdComplaintService tdComplaintService;
-	
+	@Autowired
+	private TdBrancheCompanyService tdBrancheCompanyService;
+	@Autowired
+	private TdAgentService tdAgentService;
+	@Autowired
+	private TdAgentProductService tdAgentProductService;
+	@Autowired
+	private TdBenefitService tdBenefitService;
+	@Autowired
+	private TdUserService tdUserService;
+	@Autowired
+	private TdDistrictService tdDistrictService;
+	@Autowired
+	private TdUserAccountService tdUserAccountService;	
 	@Autowired
 	private ConfigUtil configUtil;
+	
+	private final Logger logger = Logger.getLogger(getClass());
 
 	@Override
 	public Integer deleteByPrimaryKey(Integer orderId) {
@@ -310,8 +339,18 @@ public class TdOrderServiceImpl implements TdOrderService{
 			}
 		}else{
 			torder.setId(0);
-			TdOrder order = this.insertOrder(currUser, orderForm, shoppingcart, torder, now);
-			torder.setJno(order.getOrderNo());
+			//普通订单
+			if(shoppingcart.getPtype()==1){
+				TdOrder order = this.insertOrder(currUser, orderForm, shoppingcart, torder, now);
+				torder.setJno(order.getOrderNo());
+			
+			}else if(shoppingcart.getPtype()==2){//单代订单
+				TdOrder order = this.insertAgentOrder(currUser, orderForm, shoppingcart, torder, now);
+				torder.setJno(order.getOrderNo());
+			}else if(shoppingcart.getPtype()==3){//分公司订单
+				TdOrder order = this.insertBrachOrder(currUser, orderForm, shoppingcart, torder, now);
+				torder.setJno(order.getOrderNo());
+			}
 			
 			torder.setPaymentId(orderForm.getPaymentId());
 		}		
@@ -331,6 +370,7 @@ public class TdOrderServiceImpl implements TdOrderService{
 		order.setCreateTime(now);
 		order.setGainPoints(shoppingcart.getGainPoints());
 		order.setCommented(false);
+		order.setBenefited(false);
 		order.setItemNum(shoppingcart.getTotalcount());
 		order.setJointId(torder.getId());//联合订单
 		order.setOrderNo(WebUtils.generateOrderNo());
@@ -490,6 +530,163 @@ public class TdOrderServiceImpl implements TdOrderService{
 		}
 		cart.setTotalcount(itemList.size());
 	}
+	
+	/**
+	 * 生成单代订单
+	 * @param currUser
+	 * @param orderForm
+	 * @param shoppingcart
+	 * @param torder
+	 * @param now
+	 * @return
+	 */
+	private TdOrder insertAgentOrder(TdUser currUser, OrderForm orderForm, ShoppingcartVO shoppingcart,TdJointOrder torder, Date now) throws RuntimeException {
+		TdOrder order = new TdOrder();
+		order.setCreateTime(now);
+		order.setGainPoints(shoppingcart.getGainPoints());
+		order.setCommented(true);
+		order.setBenefited(false);
+		order.setItemNum(shoppingcart.getTotalcount());
+		order.setJointId(torder.getId());//联合订单
+		order.setOrderNo(WebUtils.generateOrderNo());
+		order.setOrderStatus(ConstantsUtils.ORDER_STATUS_NEW);
+		order.setOrderType(ConstantsUtils.ORDER_KIND_AGENTPRODUCT);
+		order.setPaymentId(orderForm.getPaymentId());
+		if(orderForm.getUsePoints()){
+			order.setUsedPoint(shoppingcart.getTotalPointsUsed());
+			order.setPointAmount(shoppingcart.getTotalPointAmount());
+		}else{
+			order.setUsedPoint(0);
+			order.setPointAmount(BigDecimal.ZERO);
+		}
+		order.setPostage(shoppingcart.getTotalPostage());
+		order.setPayStatus(ConstantsUtils.ORDER_PAY_STATUS_UNPAY);
+		order.setPaymentId(orderForm.getPaymentId());
+		order.setProductAmount(shoppingcart.getTotalProductAmount());
+		order.setRefundAmount(BigDecimal.ZERO);
+		order.setPayAmount(BigDecimal.ZERO);
+		order.setShipmentStatus(ConstantsUtils.ORDER_SHIPMENT_STATUS_UNSHIPPED);
+		order.setTotalAmount(shoppingcart.getTotalAmount());
+		order.setUpdateBy(currUser.getUid());
+		order.setUpdateTime(now);
+		order.setUserId(currUser.getUid());
+		order.setUserMessage(orderForm.getUserMsg());
+		order.setSupplierId(1);
+		//保存订单详情
+		TdAgent agent = shoppingcart.getAgent();
+		TdAgentSearchCriteria sc = new TdAgentSearchCriteria();
+		sc.setLevel(agent.getLevel());
+		sc.setRegionId(agent.getRegionId());
+		sc.setProductTypeId(agent.getProductTypeId());
+		int count = tdAgentService.countByCriteria(sc);
+		if(count>0){
+			throw new RuntimeException("分公司已存在，不能加入!");
+		}
+		this.save(order);
+		TdOrderProduct orderproduct = new TdOrderProduct();
+		orderproduct.setItemType(Byte.valueOf("1"));
+		orderproduct.setItemId(orderForm.getAgentProductId());
+		orderproduct.setItemPrice(shoppingcart.getAgentProduct().getSalesPrice());
+		orderproduct.setRegionId(agent.getRegionId());
+		orderproduct.setLevel(agent.getLevel());
+		orderproduct.setQuantity(1);
+		orderproduct.setTitle(shoppingcart.getAgentProduct().getTitle());
+		orderproduct.setProductTypeId(agent.getProductTypeId());
+		orderproduct.setOrderId(order.getOrderId());
+		tdOrderProductMapper.insert(orderproduct);
+		//保存订单货品
+		if(null!=shoppingcart.getItemList()){
+			for(TdShoppingcartItem item : shoppingcart.getItemList()){
+				TdOrderSku sku = new TdOrderSku();
+				sku.setDisplaySpecifications(item.getProductSku().getSpecifications());
+				sku.setItemType(item.getProduct().getKind());
+				sku.setOrderId(order.getOrderId());
+				sku.setProductSkuId(item.getProductSkuId());
+				sku.setProductId(item.getProductId());
+				sku.setPrice(item.getProductSku().getSalesPrice());
+				sku.setProductName(item.getProduct().getName());
+				sku.setProductSkuCode(item.getProductSku().getSkuCode());
+				sku.setQuantity(item.getQuantity());
+				tdOrderSkuMapper.insert(sku);
+				//更新货品库存
+				//TODO:
+			}
+			//保存收货地址
+			if(null!=orderForm.getUserAddress()){
+				TdUserAddress address = orderForm.getUserAddress();
+				TdOrderAddress orderAddress = new TdOrderAddress();
+				orderAddress.setOrderId(order.getOrderId());
+				orderAddress.setAddress(address.getAddress());
+				orderAddress.setCustomerName(address.getName());
+				orderAddress.setRegionFullName(address.getFullAddress());
+				orderAddress.setTelphone(address.getTelphone());
+				orderAddress.setRegionId(address.getRegionId());
+				tdOrderAddressMapper.insert(orderAddress);			
+			}
+		}
+		//保存日志
+		
+		return order;
+	}
+	/**
+	 * 生成分公司订单
+	 * @param currUser
+	 * @param orderForm
+	 * @param shoppingcart
+	 * @param torder
+	 * @param now
+	 * @return
+	 */
+	private TdOrder insertBrachOrder(TdUser currUser, OrderForm orderForm, ShoppingcartVO shoppingcart,TdJointOrder torder, Date now) throws RuntimeException {
+		TdOrder order = new TdOrder();
+		order.setCreateTime(now);
+		order.setGainPoints(shoppingcart.getGainPoints());
+		order.setCommented(true);
+		order.setBenefited(false);
+		order.setItemNum(shoppingcart.getTotalcount());
+		order.setJointId(torder.getId());//联合订单
+		order.setOrderNo(WebUtils.generateOrderNo());
+		order.setOrderStatus(ConstantsUtils.ORDER_STATUS_NEW);
+		order.setOrderType(ConstantsUtils.ORDER_KIND_AGENTPRODUCT);
+		order.setPaymentId(orderForm.getPaymentId());
+		if(orderForm.getUsePoints()){
+			order.setUsedPoint(shoppingcart.getTotalPointsUsed());
+			order.setPointAmount(shoppingcart.getTotalPointAmount());
+		}else{
+			order.setUsedPoint(0);
+			order.setPointAmount(BigDecimal.ZERO);
+		}
+		order.setPostage(shoppingcart.getTotalPostage());
+		order.setPayStatus(ConstantsUtils.ORDER_PAY_STATUS_UNPAY);
+		order.setPaymentId(orderForm.getPaymentId());
+		order.setProductAmount(shoppingcart.getTotalProductAmount());
+		order.setRefundAmount(BigDecimal.ZERO);
+		order.setPayAmount(BigDecimal.ZERO);
+		order.setShipmentStatus(ConstantsUtils.ORDER_SHIPMENT_STATUS_UNSHIPPED);
+		order.setTotalAmount(shoppingcart.getTotalAmount());
+		order.setUpdateBy(currUser.getUid());
+		order.setUpdateTime(now);
+		order.setUserId(currUser.getUid());
+		order.setUserMessage(orderForm.getUserMsg());
+		order.setSupplierId(1);
+		this.save(order);
+		//保存订单货品
+		TdBrancheCompany branch = shoppingcart.getBranch();
+		TdBrancheCompanySearchCriteria sc = new TdBrancheCompanySearchCriteria();
+		sc.setLevel(branch.getLevel());
+		sc.setRegionId(branch.getRegionId());
+		int count = tdBrancheCompanyService.countByCriteria(sc);
+		if(count>0){
+			throw new RuntimeException("分公司已存在，不能加入!");
+		}
+		TdOrderProduct orderproduct = new TdOrderProduct();
+		orderproduct.setItemType(Byte.valueOf("1"));
+		orderproduct.setRegionId(branch.getRegionId());
+		orderproduct.setLevel(branch.getLevel());
+		orderproduct.setOrderId(order.getOrderId());
+		tdOrderProductMapper.insert(orderproduct);
+		return order;
+	}
 
 	@Override
 	public OperResult applyRefundOrder(TdOrder order, TdOrderShipment shipment) {
@@ -530,6 +727,414 @@ public class TdOrderServiceImpl implements TdOrderService{
 		}
 		return result;
 	}
+
+	@Override
+	public OperResult receiptOrder(TdOrder order, TdUser user) {
+		OperResult result = new OperResult();
+		//订单不存在
+		if(null==order||null==order.getOrderId()){
+			result.setFailMsg("订单不存在！");
+			return result;
+		}
+		//已完成的订单的不能进行收货操作
+		if(ConstantsUtils.ORDER_STATUS_COMPLETE.equals(order.getOrderStatus())){
+			result.setFailMsg("已完成的订单的不能进行收货操作！");
+			return result;
+		}
+		
+		//未支付的订单的不能进行收货操作
+		if(ConstantsUtils.ORDER_PAY_STATUS_UNPAY.equals(order.getPayStatus())){
+			result.setFailMsg("未支付的订单的不能进行收货操作！");
+			return result;
+		}
+		//已收货的订单的不能进行收货操作
+		if(ConstantsUtils.ORDER_PAY_STATUS_UNPAY.equals(order.getPayStatus())){
+			result.setFailMsg("未支付的订单的不能进行收货操作！");
+			return result;
+		}
+		
+		//开始操作
+		Date now  = new Date();
+		TdOrder uporder = new TdOrder();
+		uporder.setOrderId(order.getOrderId());
+		uporder.setUpdateBy(user.getUid());
+		uporder.setUpdateTime(now);
+		uporder.setShipmentStatus(ConstantsUtils.ORDER_SHIPMENT_STATUS_RECEIPT);
+		tdOrderMapper.updateByPrimaryKeySelective(uporder);
+		
+		//订单操作日志
+		TdOrderLog log = new TdOrderLog();
+		log.setOrderId(order.getOrderId());
+		log.setCreateBy(user.getUid());
+		log.setCreateTime(now);
+		log.setOperType(ConstantsUtils.ORDER_LOG_TYPE_RECEIPT);
+		log.setNote("订单进行收货操作");
+		tdOrderLogMapper.insert(log);
+		
+		result.setFlag(true);
+		return result;
+	}
+
+	@Override
+	public OperResult payOrder(TdOrder order, OrderPay orderPay) throws RuntimeException {
+		OperResult result = new OperResult();
+		//订单不存在
+		if(null==order||null==order.getOrderId()){
+			result.setFailMsg("订单不存在！");
+			return result;
+		}
+		//已完成的订单的不能进行支付操作
+		if(ConstantsUtils.ORDER_STATUS_COMPLETE.equals(order.getOrderStatus())){
+			result.setFailMsg("已完成的订单的不能进行收货操作！");
+			return result;
+		}
+		
+		//已支付的订单的不能进行支付操作
+		if(ConstantsUtils.ORDER_PAY_STATUS_PAYED.equals(order.getPayStatus())){
+			result.setFailMsg("已支付的订单的不能进行支付操作！");
+			return result;
+		}
+		//金额不等不能进行支付操作
+		if(order.getUnPayAmount().compareTo(orderPay.getPayAmount())!=0){
+			result.setFailMsg("支付金额与订单金额不匹配不能进行支付操作！");
+			return result;
+		}
+		//开始操作
+		Date now  = new Date();
+		TdOrder uporder = new TdOrder();
+		uporder.setOrderId(order.getOrderId());
+		uporder.setUpdateBy(orderPay.getCreateBy());
+		uporder.setUpdateTime(now);
+		uporder.setPayStatus(ConstantsUtils.ORDER_PAY_STATUS_PAYED);
+		uporder.setPaymentId(orderPay.getPaymentId());
+		tdOrderMapper.updateByPrimaryKeySelective(uporder);
+		
+		//订单操作日志
+		TdOrderLog log = new TdOrderLog();
+		log.setOrderId(order.getOrderId());
+		log.setCreateBy(orderPay.getCreateBy());
+		log.setCreateTime(now);
+		log.setOperType(ConstantsUtils.ORDER_LOG_TYPE_PAY);
+		log.setNote("订单进行收款操作");
+		tdOrderLogMapper.insert(log);
+		
+		//代理产品订单添加代理和计算分润
+		if(ConstantsUtils.ORDER_KIND_AGENTPRODUCT.equals(order.getOrderType())){
+			//代理产品添加代理
+			TdOrderProduct orderProduct = tdOrderProductMapper.findByOrderIdAndTypeId(order.getOrderId(), Byte.valueOf("1"));
+			TdOrderLog log2 = new TdOrderLog();
+			log2.setOrderId(order.getOrderId());
+			log2.setCreateBy(orderPay.getCreateBy());
+			log2.setCreateTime(now);
+			log2.setOperType(ConstantsUtils.ORDER_LOG_TYPE_AGENT);
+			if(null!=orderProduct){
+				TdAgentProduct agentProduct = tdAgentProductService.findOne(orderProduct.getItemId());
+				if(null!=agentProduct){
+					if(ConstantsUtils.AGENT_GROUPID_AGENT.equals(agentProduct.getGroupId())){//单代代理
+						TdAgentSearchCriteria sc = new TdAgentSearchCriteria();
+						sc.setLevel(agentProduct.getLevel());
+						sc.setRegionId(orderProduct.getRegionId());
+						sc.setProductTypeId(orderProduct.getProductTypeId());
+						int count = tdAgentService.countByCriteria(sc);
+						if(count>0){
+							log2.setNote("订单生成代理操作失败：地区已经有单类代理了!");
+						}else{
+							TdAgent agent = tdAgentService.findByUid(order.getUserId());
+							if(null!=agent){//用户已经购买代理
+								if(agent.getLevel()>agentProduct.getLevel()){//已有代理级别大于先购买的代理级别，覆盖失败
+									log2.setNote("订单生成代理操作失败：用户已拥有代理级别比现购买的代理级别更高，不能降级处理!");
+								}else{
+									agent.setLevel(agentProduct.getLevel());
+									agent.setProductTypeId(orderProduct.getProductTypeId());
+									agent.setRegionId(orderProduct.getRegionId());
+									agent.setUpdateDate(now);
+									tdAgentService.save(agent);
+									log2.setNote("订单生成代理操作成功。");
+								}
+							}else{
+								agent = new TdAgent();
+								agent.setUid(order.getUserId());
+								agent.setUpdateBy(1);
+								agent.setLevel(agentProduct.getLevel());
+								agent.setProductTypeId(orderProduct.getProductTypeId());
+								agent.setRegionId(orderProduct.getRegionId());
+								agent.setUpdateDate(now);
+								tdAgentService.save(agent);
+								log2.setNote("订单生成代理操作成功。");
+							}							
+						}
+						
+					}else if(ConstantsUtils.AGENT_GROUPID_BRANCH.equals(agentProduct.getGroupId())){//分公司
+						TdBrancheCompanySearchCriteria sc = new TdBrancheCompanySearchCriteria();
+						sc.setLevel(agentProduct.getLevel());
+						sc.setRegionId(orderProduct.getRegionId());
+						int count = tdBrancheCompanyService.countByCriteria(sc);
+						if(count>0){
+							log2.setNote("订单生成代理操作失败：地区已经有分公司了!");
+						}else{
+							TdBrancheCompany branch = tdBrancheCompanyService.findByUid(order.getUserId());
+							if(null!=branch){//用户已经购买代理
+								if(branch.getLevel()>agentProduct.getLevel()){//已有分公司级别大于现购买的分公司级别，覆盖失败
+									log2.setNote("订单生成分公司操作失败：用户已拥有分公司级别比现购买的分公司级别更高，不能降级处理!");
+								}else{
+									branch.setLevel(agentProduct.getLevel());
+									branch.setRegionId(orderProduct.getRegionId());
+									branch.setUpdateTime(now);
+									branch.setUpdateBy(1);
+									tdBrancheCompanyService.save(branch);
+									log2.setNote("订单生成分公司操作成功。");
+								}
+							}else{
+								branch = new TdBrancheCompany();
+								branch.setUid(order.getUserId());
+								branch.setLevel(agentProduct.getLevel());
+								branch.setRegionId(orderProduct.getRegionId());
+								branch.setUpdateTime(now);
+								branch.setUpdateBy(1);
+								branch.setStatus(Byte.valueOf("1"));
+								tdBrancheCompanyService.save(branch);
+								log2.setNote("订单生成分公司操作成功。");
+							}							
+						}
+					}
+				}else{
+					log2.setNote("订单生成代理操作失败：代理产品未找到!");
+				}
+				//分润开始
+				BigDecimal amount = orderProduct.getItemPrice().subtract(agentProduct.getSupplierPrice());
+				TdBenefitSearchCriteria sc = new TdBenefitSearchCriteria();
+				sc.setFlag(false);
+				sc.setTypeId(agentProduct.getId());
+				List<TdBenefit> benefitList = tdBenefitService.findBySearchCriteria(sc);
+				if(null!=benefitList && benefitList.size()>0){
+					TdUser orderUser = tdUserService.findOneWithAccount(order.getUserId());
+					if(null==orderUser||null==orderUser.getUregionId()){
+						//订单操作日志
+						TdOrderLog log3 = new TdOrderLog();
+						log3.setOrderId(order.getOrderId());
+						log3.setCreateBy(1);
+						log3.setCreateTime(now);
+						log3.setOperType(ConstantsUtils.ORDER_LOG_TYPE_BENEFIT);
+						log3.setNote("订单进行分润操作失败:订单用户信息不全。");
+						tdOrderLogMapper.insert(log3);
+					}
+					TdDistrict district = tdDistrictService.findOneFull(orderUser.getUregionId());
+					if(null!=district){//地区分公司分润
+						int size=3;
+						for(int i=0; i<size; i++){
+							int level = i+1;
+							//分销设置
+							TdBenefit  benefit = this.getBenefitConfig(benefitList, ConstantsUtils.AGENT_GROUPID_BRANCH, level);
+							if(null==benefit){
+								logger.error("分公司分润操作错误：分公司分润级别"+level+"设置未找到，");
+								continue;
+							}
+							if(level==1){//分公司第一级为平台
+								String note = "";
+								TdUserAccount account = tdUserAccountService.findOne(1);
+								saveBenefit(account, amount, order, benefit, now, note);								
+							}else{
+								TdBrancheCompanySearchCriteria bsc = new TdBrancheCompanySearchCriteria();
+								bsc.setLevel(level);
+								bsc.setRegionId(district.getId());
+								bsc.setFlag(false);
+								List<TdBrancheCompany> branchList = tdBrancheCompanyService.findBySearchCriteria(bsc);
+								if(null!= branchList && branchList.size()>0){
+									String note = "";
+									TdBrancheCompany branch = branchList.get(0);
+									TdUserAccount account = tdUserAccountService.findOne(branch.getUid());
+									saveBenefit(account, amount, order, benefit, now, note);
+								}else{//未找到分公司，分润转给平台
+									String note = "";
+									TdUserAccount account = tdUserAccountService.findOne(1);
+									saveBenefit(account, amount, order, benefit, now, note);								
+								}
+							}
+						}
+					}
+					//三级分销分润
+					displayDistributionBenefit(amount, order, orderUser, benefitList, 3, now);
+				}
+				Date now2  = new Date();
+				TdOrder uporder2 = new TdOrder();
+				uporder2.setOrderId(order.getOrderId());
+				uporder2.setUpdateBy(1);
+				uporder2.setUpdateTime(now2);
+				uporder2.setBenefited(true);
+				tdOrderMapper.updateByPrimaryKeySelective(uporder2);
+				
+			}else{
+				log2.setNote("订单生成代理操作失败：订单详情未找到!");
+			}			
+			tdOrderLogMapper.insert(log2);
+		}
+		
+		result.setFlag(true);
+		return result;
+	}
 	
+	
+	@Override
+	public void benefitOrder(TdOrder order) throws RuntimeException {
+		Date now  = new Date();
+		if(!order.getBenefited()){
+			if(ConstantsUtils.ORDER_KIND_AGENTPRODUCT.equals(order.getOrderType())){//代理产品分润
+				//代理产品添加代理
+				TdOrderProduct orderProduct = tdOrderProductMapper.findByOrderIdAndTypeId(order.getOrderId(), Byte.valueOf("1"));
+				if(null!=orderProduct){
+					TdAgentProduct agentProduct = tdAgentProductService.findOne(orderProduct.getItemId());
+					if(null!=agentProduct){
+						BigDecimal amount = orderProduct.getItemPrice().subtract(agentProduct.getSupplierPrice());
+						TdBenefitSearchCriteria sc = new TdBenefitSearchCriteria();
+						sc.setFlag(false);
+						sc.setTypeId(agentProduct.getId());
+						List<TdBenefit> benefitList = tdBenefitService.findBySearchCriteria(sc);
+						if(null!=benefitList && benefitList.size()>0){
+							TdUser orderUser = tdUserService.findOneWithAccount(order.getUserId());
+							if(null==orderUser||null==orderUser.getUregionId()){
+								//订单操作日志
+								TdOrderLog log3 = new TdOrderLog();
+								log3.setOrderId(order.getOrderId());
+								log3.setCreateBy(1);
+								log3.setCreateTime(now);
+								log3.setOperType(ConstantsUtils.ORDER_LOG_TYPE_BENEFIT);
+								log3.setNote("订单进行分润操作失败:订单用户信息不全。");
+								tdOrderLogMapper.insert(log3);
+							}
+							TdDistrict district = tdDistrictService.findOneFull(orderUser.getUregionId());
+							if(null!=district){//地区分公司分润
+								int size=3;
+								for(int i=0; i<size; i++){
+									int level = i+1;
+									//分销设置
+									TdBenefit  benefit = this.getBenefitConfig(benefitList, ConstantsUtils.AGENT_GROUPID_BRANCH, level);
+									if(null==benefit){
+										logger.error("分公司分润操作错误：分公司分润级别"+level+"设置未找到，");
+										continue;
+									}
+									if(level==1){//分公司第一级为平台
+										String note = "";
+										TdUserAccount account = tdUserAccountService.findOne(1);
+										saveBenefit(account, amount, order, benefit, now, note);								
+									}else{
+										TdBrancheCompanySearchCriteria bsc = new TdBrancheCompanySearchCriteria();
+										bsc.setLevel(level);
+										bsc.setRegionId(district.getId());
+										bsc.setFlag(false);
+										List<TdBrancheCompany> branchList = tdBrancheCompanyService.findBySearchCriteria(bsc);
+										if(null!= branchList && branchList.size()>0){
+											String note = "";
+											TdBrancheCompany branch = branchList.get(0);
+											TdUserAccount account = tdUserAccountService.findOne(branch.getUid());
+											saveBenefit(account, amount, order, benefit, now, note);
+										}else{//未找到分公司，分润转给平台
+											String note = "";
+											TdUserAccount account = tdUserAccountService.findOne(1);
+											saveBenefit(account, amount, order, benefit, now, note);								
+										}
+									}
+								}
+							}
+							//三级分销分润
+							displayDistributionBenefit(amount, order, orderUser, benefitList, 3, now);
+						}
+						TdOrder uporder2 = new TdOrder();
+						uporder2.setOrderId(order.getOrderId());
+						uporder2.setUpdateBy(1);
+						uporder2.setUpdateTime(now);
+						uporder2.setBenefited(true);
+						tdOrderMapper.updateByPrimaryKeySelective(uporder2);
+					}
+				}
+			}else if(ConstantsUtils.ORDER_KIND_COMMON.equals(order.getOrderType())){//普通商品分润
+				
+			}
+		}
+		
+	}
+
+	/**
+	 * 三级分销分润
+	 * @param order
+	 * @param user
+	 * @param benefitList
+	 * @param size 分几级
+	 */
+	private void displayDistributionBenefit(BigDecimal amount, TdOrder order, TdUser user, List<TdBenefit> benefitList, int size, Date now) throws RuntimeException{
+		int userId = user.getUparentId();
+		for(int i=0; i<size;i++){
+			int level = i+1;
+			//分销设置
+			TdBenefit  benefit = this.getBenefitConfig(benefitList, ConstantsUtils.AGENT_GROUPID_DISTRIBUTION, level);
+			if(null==benefit){
+				logger.error("三级分销分润操作错误：三级分销分润级别"+(i+1)+"设置未找到，");
+				throw new RuntimeException("三级分销分润操作错误：三级分销分润级别"+(i+1)+"设置未找到，");
+			}
+			if(i==3 && size==4){//自己购买分润
+				String note = "";
+				TdUserAccount account = user.getUserAccount();
+				saveBenefit(account, amount, order, benefit, now, note);
+			}else{
+				//三级分销用户
+				if(userId>0){//上级分销用户id 存在
+					TdUser buser = tdUserService.findOneWithAccount(userId);
+					if(null!=buser && null!=buser.getUserAccount()){
+						userId = buser.getUparentId();
+						TdUserAccount account = buser.getUserAccount();
+						//分润
+						String note = "";
+						saveBenefit(account, amount, order, benefit, now, note);
+					}else{//未找到分公司，分润转给平台
+						userId = 0;
+						TdUserAccount account = tdUserAccountService.findOne(1);
+						//分润
+						String note = "未找到"+level+"级分销  ，当前用户userid="+user.getUid()+" ,分润划归归平台";
+						saveBenefit(account, amount, order, benefit, now, note);
+					}
+				}else{//上级分销用户id 不存在
+					TdUserAccount account = tdUserAccountService.findOne(1);
+					//分润
+					String note = "未找到"+level+"级分销  ,当前用户userid="+user.getUid()+" ,分润划归归平台";
+					saveBenefit(account, amount, order, benefit, now, note);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 匹配分润设置
+	 * @param benefitList
+	 * @param groupId
+	 * @param level
+	 * @return
+	 */
+	private TdBenefit getBenefitConfig(List<TdBenefit> benefitList, Integer groupId, Integer level){
+		for(TdBenefit benefit : benefitList){
+			if(groupId.equals(benefit.getGroupId()) && level.equals(benefit.getLevel())){
+				return benefit;
+			}
+		}
+		return null;
+	}
+	/**
+	 * 分润操作
+	 * @param account
+	 * @param amount
+	 * @param order
+	 * @param benefit
+	 * @param now
+	 */
+	private void saveBenefit(TdUserAccount account, BigDecimal amount, TdOrder order, TdBenefit benefit, Date now, String note){
+		account.setUpdateBy(1);
+		account.setUpdateTime(now);
+		TdUserAccountLog alog = new TdUserAccountLog();
+		alog.setPreamount(account.getAmount());
+		alog.setUid(account.getUid());
+		alog.setUpamount(amount.multiply(new BigDecimal(benefit.getPercent()).divide(new BigDecimal(100))));
+		alog.setType(TdUserAccountLog.USERACCOUNTLOG_TYPE_PROFIT_INCOME);
+    	alog.setCreateTime(now);
+    	alog.setNote("订单分润收入，订单编号："+order.getOrderNo()+" "+note);
+		tdUserAccountService.addAmount(account, alog);	
+	}
 	
 }

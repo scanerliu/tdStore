@@ -41,7 +41,7 @@
 	    <div class="btn-group">
 	      <#if order.payStatus==2><a href="javascript:;" title="">立即付款</a></#if>
 	      <a href="${app.basePath}/mobile/order/detail${order.orderId!'0'}" title="">查看订单</a>
-	      <#if order.orderStatus==3 && order.commented==false><a class="active" href="${app.basePath}/mobile/user/comment/${order.orderId!'0'}" title="去评价">去评价</a></#if>
+	      <#if order.orderStatus==3 && order.commented==false><a class="active" href="我的评价.html" title="">去评价</a></#if>
 	    </div>
 	  </section>
 	</#list>
